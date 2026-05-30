@@ -1,0 +1,38 @@
+erDiagram
+    USER {
+        int id PK
+        string name
+        string email
+        datetime created_at
+    }
+
+    PROJECT {
+        int id PK
+        string name
+        string description
+        int owner_id FK
+        datetime created_at
+    }
+
+    TASK {
+        int id PK
+        string title
+        string status
+        int project_id FK
+        int assignee_id FK
+        datetime due_date
+    }
+
+    COMMENT {
+        int id PK
+        text body
+        int task_id FK
+        int author_id FK
+        datetime created_at
+    }
+
+    USER ||--o{ PROJECT : "所有"
+    PROJECT ||--o{ TASK : "含む"
+    USER ||--o{ TASK : "担当"
+    TASK ||--o{ COMMENT : "持つ"
+    USER ||--o{ COMMENT : "投稿"

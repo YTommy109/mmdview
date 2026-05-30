@@ -1,0 +1,23 @@
+sequenceDiagram
+    actor User as ユーザー
+    participant Browser as ブラウザ
+    participant API as FastAPI
+    participant FS as ファイルシステム
+
+    User->>Browser: ファイルを開く
+    Browser->>API: POST /open-file
+    API->>User: OS ファイルダイアログ表示
+    User->>API: .mmd ファイルを選択
+    API->>FS: ファイル読み込み
+    FS-->>API: テキスト内容
+    API->>FS: watchdog 監視開始
+    API-->>Browser: HX-Redirect: /
+    Browser->>API: GET /
+    API-->>Browser: viewer.html（Mermaid コード埋め込み）
+    Browser->>Browser: mermaid.js でレンダリング
+    Browser->>API: GET /events（SSE 接続）
+
+    Note over FS,API: ファイル保存時
+    FS->>API: 変更イベント
+    API->>Browser: SSE: reload
+    Browser->>Browser: window.location.reload()

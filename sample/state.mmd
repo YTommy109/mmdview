@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> Welcome : アプリ起動
+
+    Welcome --> Watching : ファイル選択
+
+    state Watching {
+        [*] --> Rendering
+        Rendering --> Rendering : ファイル変更（自動リロード）
+        Rendering --> Error : Mermaid 構文エラー
+        Error --> Rendering : ファイル修正・保存
+    }
+
+    Watching --> Welcome : 別ファイルを開く（キャンセル）
+    Watching --> Watching : 別ファイルを開く（選択）
+    Watching --> [*] : ウィンドウを閉じる
+    Welcome --> [*] : ウィンドウを閉じる

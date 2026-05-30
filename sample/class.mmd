@@ -1,0 +1,38 @@
+classDiagram
+    class EventBus {
+        -list~Queue~ _listeners
+        -AbstractEventLoop _loop
+        +set_loop(loop)
+        +subscribe() Queue
+        +unsubscribe(q)
+        +notify(event)
+    }
+
+    class WatchService {
+        -EventBus _bus
+        -Observer _observer
+        -Path _path
+        +set_file(path)
+        +get_content() str
+        +get_path() Path
+        +stop()
+    }
+
+    class _ChangeHandler {
+        -Path _target
+        -EventBus _bus
+        +on_modified(event)
+    }
+
+    class FastAPI {
+        +lifespan()
+        +GET /
+        +POST /open-file
+        +GET /events
+    }
+
+    WatchService --> EventBus : uses
+    WatchService --> _ChangeHandler : creates
+    _ChangeHandler --> EventBus : notify()
+    FastAPI --> WatchService : reads
+    FastAPI --> EventBus : subscribes
