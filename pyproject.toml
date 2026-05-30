@@ -1,0 +1,41 @@
+[project]
+name = "mmdview"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.136",
+    "uvicorn[standard]>=0.46",
+    "pywebview>=6.2",
+    "watchdog>=6.0",
+    "sse-starlette>=2.1",
+    "jinja2>=3.1",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0",
+    "httpx>=0.28",
+    "ruff>=0.9",
+    "pyinstaller>=6.20",
+]
+
+[tool.taskipy.tasks]
+dev = "python -m backend.app"
+server = "uvicorn backend.main:app --reload --port 8000"
+test = "pytest tests/ -v"
+build = "pyinstaller mmdview.spec"
+lint = "ruff check . && ruff format --check ."
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "C901"]
+mccabe.max-complexity = 10
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
