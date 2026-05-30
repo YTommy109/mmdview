@@ -1,12 +1,12 @@
-import pytest
-from pathlib import Path
 from unittest.mock import patch
-from fastapi.testclient import TestClient
+
+import pytest
 
 
 @pytest.fixture(autouse=True)
 def reset_watch_service():
     from backend.services.watch_service import watch_service
+
     watch_service.stop()
     watch_service._path = None
     yield
@@ -24,6 +24,7 @@ def test_index_shows_viewer_when_file_set(client, tmp_path):
     f = tmp_path / "test.mmd"
     f.write_text("graph TD\n    A --> B", encoding="utf-8")
     from backend.services.watch_service import watch_service
+
     watch_service.set_file(str(f))
 
     response = client.get("/")
@@ -42,6 +43,7 @@ def test_open_file_sets_file_and_redirects(client, tmp_path):
     assert response.status_code == 200
     assert response.headers.get("HX-Redirect") == "/"
     from backend.services.watch_service import watch_service
+
     assert watch_service.get_path() == f
 
 

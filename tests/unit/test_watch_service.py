@@ -1,7 +1,7 @@
 import time
-from pathlib import Path
+
 import pytest
-from unittest.mock import MagicMock
+
 from backend.services.watch_service import WatchService
 
 
@@ -53,14 +53,20 @@ def test_stop_kills_observer(tmp_mmd):
 
 def test_notify_called_on_file_change(tmp_mmd):
     from backend.services.event_bus import EventBus
-    bus = EventBus()
-    notified = []
-    bus.notify = lambda event="reload": notified.append(event)
 
+    class _TrackingBus(EventBus):
+        def __init__(self) -> None:
+            super().__init__()
+            self.notified: list[str] = []
+
+        def notify(self, event: str = "reload") -> None:
+            self.notified.append(event)
+
+    bus = _TrackingBus()
     svc = WatchService(event_bus=bus)
     svc.set_file(str(tmp_mmd))
     tmp_mmd.write_text("graph TD\n    A --> C", encoding="utf-8")
     time.sleep(0.5)
     svc.stop()
 
-    assert "reload" in notified
+    assert "reload" in bus.notified

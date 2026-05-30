@@ -1,0 +1,11 @@
+.coverage
+htmlcov/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.spec.bak
+.superpowers/
+.claude/

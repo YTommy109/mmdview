@@ -11,28 +11,53 @@ dependencies = [
     "jinja2>=3.1",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pytest>=8.0",
+    "pytest-cov",
     "httpx>=0.28",
     "ruff>=0.9",
+    "ty",
+    "pre-commit",
     "pyinstaller>=6.20",
     "taskipy>=1.13",
 ]
 
 [tool.taskipy.tasks]
-dev = "python -m backend.app"
-server = "uvicorn backend.main:app --reload --port 8000"
-test = "pytest tests/ -v"
-build = "pyinstaller mmdview.spec"
-lint = "ruff check . && ruff format --check ."
+dev        = "python -m backend.app"
+server     = "uvicorn backend.main:app --reload --port 8000"
+test       = "pytest -v --cov --cov-report=term-missing"
+build      = "pyinstaller mmdview.spec"
+lint       = "ruff check ."
+format     = "ruff format ."
+typecheck  = "ty check"
+"lint:md"  = "markdownlint-cli2 '*.md'"
 
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "C901"]
+select = ["E", "F", "C901", "I"]
 mccabe.max-complexity = 10
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/integration"]
+pythonpath = ["."]
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.ty.rules]
+# pywebview stubs are incomplete; suppress stub-related errors in app.py
+unresolved-attribute = "warn"
+invalid-argument-type = "warn"
+
+[tool.coverage.run]
+source = ["backend"]
+omit = ["tests/*", "backend/app.py"]
+
+[tool.coverage.report]
+fail_under = 80
 
 [tool.hatch.build.targets.wheel]
 packages = ["backend"]

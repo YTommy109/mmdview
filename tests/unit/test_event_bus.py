@@ -1,5 +1,7 @@
 import asyncio
+
 import pytest
+
 from backend.services.event_bus import EventBus
 
 

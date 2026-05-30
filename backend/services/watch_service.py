@@ -1,7 +1,11 @@
 from pathlib import Path
+from typing import Any
+
+from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, FileSystemEvent
-from backend.services.event_bus import EventBus, event_bus as _default_bus
+
+from backend.services.event_bus import EventBus
+from backend.services.event_bus import event_bus as _default_bus
 
 
 class _ChangeHandler(FileSystemEventHandler):
@@ -10,14 +14,17 @@ class _ChangeHandler(FileSystemEventHandler):
         self._bus = bus
 
     def on_modified(self, event: FileSystemEvent) -> None:
-        if Path(event.src_path) == self._target:
+        src = event.src_path
+        if isinstance(src, bytes):
+            src = src.decode()
+        if Path(src) == self._target:
             self._bus.notify()
 
 
 class WatchService:
     def __init__(self, event_bus: EventBus | None = None) -> None:
         self._bus = event_bus or _default_bus
-        self._observer: Observer | None = None
+        self._observer: Any = None  # Observer | None; Any avoids watchdog stub limitation
         self._path: Path | None = None
 
     def set_file(self, path: str) -> None:

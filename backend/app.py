@@ -56,7 +56,7 @@ def _wait_for_server(port: int, timeout: float = 5.0) -> None:
 
 def _open_file_from_menu(window: webview.Window) -> None:
     result = window.create_file_dialog(
-        webview.OPEN_DIALOG,
+        webview.OPEN_DIALOG,  # type: ignore[arg-type]
         allow_multiple=False,
         file_types=("Mermaid files (*.mmd;*.md)", "All files (*.*)"),
     )
@@ -84,6 +84,7 @@ def main() -> None:
         width=state.get("width", 1024),
         height=state.get("height", 768),
     )
+    assert window is not None
 
     _save_timer: threading.Timer | None = None
 
@@ -98,11 +99,14 @@ def main() -> None:
     window.events.resized += lambda width, height: _schedule_save()
 
     menu = [
-        webview.Menu("File", [
-            webview.MenuAction("Open...", lambda: _open_file_from_menu(window)),
-            webview.MenuSeparator(),
-            webview.MenuAction("Close", window.destroy),
-        ])
+        webview.Menu(
+            "File",
+            [
+                webview.MenuAction("Open...", lambda: _open_file_from_menu(window)),
+                webview.MenuSeparator(),
+                webview.MenuAction("Close", window.destroy),
+            ],
+        )
     ]
 
     webview.start(menu=menu)

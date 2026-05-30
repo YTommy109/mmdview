@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from sse_starlette.sse import EventSourceResponse
+
 from backend.services.event_bus import event_bus
 
 router = APIRouter()

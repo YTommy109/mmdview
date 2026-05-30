@@ -1,6 +1,6 @@
 # mmdview — 設計ドキュメント
 
-**日付**: 2026-05-30  
+**日付**: 2026-05-30
 **ステータス**: 承認済み
 
 ## 概要
@@ -73,6 +73,8 @@ mmdview/
 ### 表示
 
 1. `viewer.html` の `<pre class="mermaid">` タグにファイルテキストを埋め込む
+   - `.mmd` ファイル: ファイル全体をそのまま埋め込む
+   - `.md` ファイル: ファイル全体をそのまま埋め込む（mermaid.js が ` ```mermaid ` フェンスを自動処理する）
 2. mermaid.js（CDN）が DOM をスキャンして SVG をレンダリング
 3. JavaScript が `GET /events` に SSE 接続を確立
 

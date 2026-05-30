@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
+
 from backend.paths import TEMPLATES_DIR
 from backend.services.watch_service import watch_service
 
@@ -10,6 +11,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 def _pick_file() -> str | None:
     import webview
+
     result = webview.windows[0].create_file_dialog(
         webview.OPEN_DIALOG,
         allow_multiple=False,
@@ -22,13 +24,17 @@ def _pick_file() -> str | None:
 async def index(request: Request) -> HTMLResponse:
     content = watch_service.get_content()
     path = watch_service.get_path()
-    if content is None:
+    if content is None or path is None:
         return templates.TemplateResponse(request, "welcome.html")
-    return templates.TemplateResponse(request, "viewer.html", {
-        "content": content,
-        "filename": path.name,
-        "filepath": str(path),
-    })
+    return templates.TemplateResponse(
+        request,
+        "viewer.html",
+        {
+            "content": content,
+            "filename": path.name,
+            "filepath": str(path),
+        },
+    )
 
 
 @router.post("/open-file")
