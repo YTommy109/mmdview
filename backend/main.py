@@ -12,7 +12,9 @@ async def lifespan(app: FastAPI):
     yield
 
 
+from backend.paths import STATIC_DIR
+
 app = FastAPI(lifespan=lifespan)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.include_router(html.router)
 app.include_router(events.router)

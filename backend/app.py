@@ -2,7 +2,6 @@ import json
 import socket
 import threading
 import time
-from pathlib import Path
 
 import uvicorn
 import webview
@@ -44,6 +43,17 @@ def _start_server(port: int) -> None:
     uvicorn.run(app, host="127.0.0.1", port=port, log_level="error")
 
 
+def _wait_for_server(port: int, timeout: float = 5.0) -> None:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.1):
+                return
+        except OSError:
+            time.sleep(0.05)
+    raise RuntimeError(f"Server did not start on port {port} within {timeout}s")
+
+
 def _open_file_from_menu(window: webview.Window) -> None:
     result = window.create_file_dialog(
         webview.OPEN_DIALOG,
@@ -64,7 +74,7 @@ def main() -> None:
 
     server_thread = threading.Thread(target=_start_server, args=(port,), daemon=True)
     server_thread.start()
-    time.sleep(0.5)  # サーバー起動待ち
+    _wait_for_server(port)
 
     window = webview.create_window(
         "mmdview",

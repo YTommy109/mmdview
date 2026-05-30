@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
+from backend.paths import TEMPLATES_DIR
 from backend.services.watch_service import watch_service
 
 router = APIRouter()
-templates = Jinja2Templates(directory="backend/templates")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 def _pick_file() -> str | None:
