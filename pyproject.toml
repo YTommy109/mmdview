@@ -17,6 +17,7 @@ dev-dependencies = [
     "httpx>=0.28",
     "ruff>=0.9",
     "pyinstaller>=6.20",
+    "taskipy>=1.13",
 ]
 
 [tool.taskipy.tasks]
