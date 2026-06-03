@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: 依存パッケージをインストールする
+        run: uv sync --group dev --frozen
+
+      - name: Lint チェックを実行する
+        run: uv run task lint
+
+      - name: 型チェックを実行する
+        run: uv run task typecheck
+
+  test:
+    needs: lint-typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: 依存パッケージをインストールする
+        run: uv sync --group dev --frozen
+
+      - name: 単体・統合テストを実行する
+        run: uv run task test
