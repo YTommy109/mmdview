@@ -1,0 +1,11 @@
+<div id="update-banner"
+     style="padding: 0.5rem 0.75rem; font-size: 0.8rem; border-top: 1px solid #ccc; background: #f5f5f5;">
+  <p style="margin: 0 0 0.4rem; font-weight: bold">v{{ version }} があります</p>
+  <button
+    hx-post="/api/update/download"
+    hx-target="#update-banner"
+    hx-swap="outerHTML"
+    style="font-size: 0.75rem; width: 100%">
+    ダウンロード
+  </button>
+</div>

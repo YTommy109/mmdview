@@ -1,0 +1,27 @@
+<div id="update-banner"
+     style="padding: 0.5rem 0.75rem; font-size: 0.8rem; border-top: 1px solid #ccc; background: #f5f5f5;"
+     {% if status == "downloading" %}
+     hx-get="/api/update/progress"
+     hx-trigger="every 1s"
+     hx-swap="outerHTML"
+     {% endif %}>
+  {% if status == "downloading" %}
+    <p style="margin: 0 0 0.3rem">ダウンロード中...</p>
+    <progress value="{{ percent }}" max="100" style="width: 100%"></progress>
+    <p style="margin: 0.2rem 0 0; font-size: 0.7rem">{{ percent }}%</p>
+  {% elif status == "done" %}
+    <p style="margin: 0 0 0.4rem">ダウンロード完了</p>
+    <button
+      hx-post="/api/update/install"
+      hx-target="#update-banner"
+      hx-swap="outerHTML"
+      style="font-size: 0.75rem; width: 100%">
+      インストールして再起動
+    </button>
+  {% elif status == "error" %}
+    <p style="margin: 0; color: #c00;">ダウンロードに失敗しました</p>
+  {% elif status.startswith("install_error:") %}
+    <p style="margin: 0; color: #c00;">インストールに失敗しました（{{ status.split(":")[-1] }}）</p>
+    <p style="margin: 0.3rem 0 0; font-size: 0.7rem;">DMG ファイルを手動でマウントして更新してください。</p>
+  {% endif %}
+</div>

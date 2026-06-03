@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <title>アップデート確認</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+</head>
+<body>
+<main style="padding: 2rem; max-width: 360px; margin: 0 auto; font-family: system-ui, sans-serif;">
+  {% if not available %}
+  <p style="font-size: 1.5rem; margin: 0">✓</p>
+  <h2 style="margin: 0.5rem 0 0">最新バージョンです</h2>
+  <p style="margin: 0.5rem 0 0; color: #666;">
+    mmdview v{{ current_version }} は最新バージョンです。
+  </p>
+  {% else %}
+  <div id="update-banner">
+    <h2 style="margin: 0 0 1rem">v{{ latest_version }} が利用可能です</h2>
+    <dl style="font-size: 0.9rem; margin: 0 0 1rem;">
+      <div style="display: flex; gap: 0.5rem;">
+        <dt style="color: #666; min-width: 3rem">現在</dt>
+        <dd style="margin: 0">v{{ current_version }}</dd>
+      </div>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
+        <dt style="color: #666; min-width: 3rem">最新</dt>
+        <dd style="margin: 0">v{{ latest_version }}</dd>
+      </div>
+    </dl>
+    {% if download_url %}
+    <button
+      hx-post="/api/update/download"
+      hx-target="#update-banner"
+      hx-swap="outerHTML"
+      style="font-size: 0.9rem; width: 100%">
+      ダウンロード
+    </button>
+    {% else %}
+    <p style="font-size: 0.85rem; margin: 0; color: #666;">
+      <a href="https://github.com/YTommy109/mmdview/releases/latest" target="_blank">
+        GitHub リリースページ
+      </a>からダウンロードしてください。
+    </p>
+    {% endif %}
+  </div>
+  {% endif %}
+</main>
+</body>
+</html>
