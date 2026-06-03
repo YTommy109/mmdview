@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+  <div id="update-banner"
+       hx-get="/api/update/check"
+       hx-trigger="load, focus from:window"
+       hx-swap="outerHTML">
+  </div>
   {% block content %}{% endblock %}
 </body>
 </html>

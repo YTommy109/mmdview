@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from backend.paths import STATIC_DIR
-from backend.routers import events, html
+from backend.routers import events, html, update
 from backend.services.event_bus import event_bus
 
 
@@ -19,3 +19,4 @@ app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.include_router(html.router)
 app.include_router(events.router)
+app.include_router(update.router)

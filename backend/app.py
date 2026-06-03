@@ -111,7 +111,9 @@ def main() -> None:
         )
     ]
 
-    webview.start(menu=menu)
+    from backend.update_window import setup_app_menu
+
+    webview.start(menu=menu, func=lambda: setup_app_menu(port))
     watch_service.stop()
 
 
