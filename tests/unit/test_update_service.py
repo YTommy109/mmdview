@@ -6,7 +6,18 @@ from __future__ import annotations
 import os
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 import backend.services.update_service as svc
+
+
+@pytest.fixture(autouse=True)
+def reset_state():
+    svc._cache.update({"checked_at": None, "result": None})
+    svc._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
+    yield
+    svc._cache.update({"checked_at": None, "result": None})
+    svc._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
 
 
 def _make_github_response(tag: str, assets: list[dict] | None = None) -> MagicMock:
@@ -17,7 +28,6 @@ def _make_github_response(tag: str, assets: list[dict] | None = None) -> MagicMo
 
 
 def test_check_update_新バージョンあり():
-    svc._cache["checked_at"] = None
     assets = [
         {"name": "mmdview-v999.9.9.dmg", "browser_download_url": "https://example.com/test.dmg"}
     ]
@@ -32,7 +42,6 @@ def test_check_update_新バージョンあり():
 
 
 def test_check_update_最新バージョン():
-    svc._cache["checked_at"] = None
     mock_resp = _make_github_response(f"v{svc._CURRENT_VERSION}")
 
     with patch("backend.services.update_service.httpx.get", return_value=mock_resp):
@@ -42,7 +51,6 @@ def test_check_update_最新バージョン():
 
 
 def test_check_update_キャッシュが効く():
-    svc._cache["checked_at"] = None
     mock_resp = _make_github_response("v0.2.0")
 
     with patch("backend.services.update_service.httpx.get", return_value=mock_resp) as mock_get:
@@ -71,7 +79,6 @@ def test_get_download_state_MMDVIEW_MOCK_DMG環境変数でdone状態を返す()
 
 
 def test_download_update_進捗更新(tmp_path):
-    svc._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
     chunk_data = [b"a" * 50, b"b" * 50]
     dmg_dest = tmp_path / "test.dmg"
 

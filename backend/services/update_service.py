@@ -18,6 +18,7 @@ _CACHE_TTL = 3600
 
 _cache: dict = {"checked_at": None, "result": None}
 _download_state: dict = {"percent": 0, "status": "idle", "dmg_path": None}
+_state_lock = threading.Lock()
 _logger = logging.getLogger(__name__)
 
 
@@ -70,12 +71,14 @@ def get_download_state() -> dict:
     """
     if mock_dmg := os.environ.get("MMDVIEW_MOCK_DMG"):
         return {"percent": 100, "status": "done", "dmg_path": mock_dmg}
-    return dict(_download_state)
+    with _state_lock:
+        return dict(_download_state)
 
 
 def _do_download(url: str, dest: Path | None = None) -> None:
     """実際のダウンロード処理（バックグラウンドスレッドで実行）。"""
-    _download_state.update({"percent": 0, "status": "downloading", "dmg_path": None})
+    with _state_lock:
+        _download_state.update({"percent": 0, "status": "downloading", "dmg_path": None})
     dmg_path = dest or Path.home() / "Downloads" / "mmdview-update.dmg"
     try:
         with httpx.stream("GET", url, follow_redirects=True, timeout=300) as resp:
@@ -87,12 +90,15 @@ def _do_download(url: str, dest: Path | None = None) -> None:
                     f.write(chunk)
                     downloaded += len(chunk)
                     if total > 0:
-                        _download_state["percent"] = int(downloaded / total * 100)
-        _download_state["status"] = "done"
-        _download_state["dmg_path"] = str(dmg_path)
+                        with _state_lock:
+                            _download_state["percent"] = int(downloaded / total * 100)
+        with _state_lock:
+            _download_state["status"] = "done"
+            _download_state["dmg_path"] = str(dmg_path)
     except Exception:
         _logger.error("ダウンロード失敗: url=%s", url, exc_info=True)
-        _download_state["status"] = "error"
+        with _state_lock:
+            _download_state["status"] = "error"
 
 
 def invalidate_cache() -> None:
@@ -103,6 +109,7 @@ def invalidate_cache() -> None:
 
 def download_update(url: str) -> None:
     """ダウンロードをバックグラウンドスレッドで開始する。"""
-    if _download_state["status"] == "downloading":
-        return
+    with _state_lock:
+        if _download_state["status"] == "downloading":
+            return
     threading.Thread(target=_do_download, args=(url,), daemon=True).start()
