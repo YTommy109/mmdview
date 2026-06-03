@@ -58,6 +58,8 @@ python-version = "3.12"
 # pywebview stubs are incomplete; suppress stub-related errors in app.py
 unresolved-attribute = "warn"
 invalid-argument-type = "warn"
+# AppKit is macOS-only and cannot be resolved on Linux CI
+unresolved-import = "warn"
 
 [tool.coverage.run]
 source = ["backend"]
