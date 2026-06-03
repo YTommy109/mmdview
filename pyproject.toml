@@ -89,3 +89,8 @@ replace = 'version = "{new_version}"'
 filename = "mmdview.spec"
 search = '"CFBundleShortVersionString": "{current_version}"'
 replace = '"CFBundleShortVersionString": "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "backend/version.py"
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
