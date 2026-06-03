@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="45%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="node" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0abfc"/>
+      <stop offset="100%" stop-color="#a5f3fc"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Subtle top highlight -->
+  <rect x="0" y="0" width="512" height="256" rx="112" fill="white" opacity="0.04"/>
+  <!-- Edge 1: top node → middle node (line + arrowhead) -->
+  <line x1="256" y1="192" x2="256" y2="220" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.8"/>
+  <polygon points="242,220 270,220 256,248" fill="white" opacity="0.85"/>
+  <!-- Edge 2: middle node → bottom node (line + arrowhead) -->
+  <line x1="256" y1="332" x2="256" y2="360" stroke="white" stroke-width="8" stroke-linecap="round" opacity="0.8"/>
+  <polygon points="242,360 270,360 256,388" fill="white" opacity="0.85"/>
+  <!-- Top node -->
+  <rect x="148" y="108" width="216" height="82" rx="22" fill="url(#node)"/>
+  <!-- Middle node -->
+  <rect x="148" y="248" width="216" height="82" rx="22" fill="url(#node)" opacity="0.88"/>
+  <!-- Bottom node -->
+  <rect x="148" y="388" width="216" height="82" rx="22" fill="url(#node)" opacity="0.76"/>
+</svg>
