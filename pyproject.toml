@@ -21,17 +21,21 @@ dev = [
     "pre-commit",
     "pyinstaller>=6.20",
     "taskipy>=1.13",
+    "bump-my-version",
 ]
 
 [tool.taskipy.tasks]
-dev        = "python -m backend.app"
-server     = "uvicorn backend.main:app --reload --port 8000"
-test       = "pytest -v --cov --cov-report=term-missing"
-build      = "pyinstaller mmdview.spec"
-lint       = "ruff check ."
-format     = "ruff format ."
-typecheck  = "ty check"
-"lint:md"  = "markdownlint-cli2 '*.md'"
+dev          = "python -m backend.app"
+server       = "uvicorn backend.main:app --reload --port 8000"
+test         = "pytest -v --cov --cov-report=term-missing"
+build        = "pyinstaller mmdview.spec"
+lint         = "ruff check ."
+format       = "ruff format ."
+typecheck    = "ty check"
+"lint:md"    = "markdownlint-cli2 '*.md'"
+"bump:patch" = "bash scripts/bump.sh patch"
+"bump:minor" = "bash scripts/bump.sh minor"
+"bump:major" = "bash scripts/bump.sh major"
 
 [tool.ruff]
 line-length = 100
@@ -65,3 +69,20 @@ packages = ["backend"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.bumpversion]
+current_version = "0.1.0"
+commit = true
+commit_args = "--no-verify"
+message = "chore: バージョンを {current_version} から {new_version} に更新する"
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "mmdview.spec"
+search = '"CFBundleShortVersionString": "{current_version}"'
+replace = '"CFBundleShortVersionString": "{new_version}"'
