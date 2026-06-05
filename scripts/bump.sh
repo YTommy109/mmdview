@@ -17,5 +17,8 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
 fi
 
 bump-my-version bump "$LEVEL"
+uv lock
+git add uv.lock
+git commit --amend --no-edit
 git push
 git push --tags
