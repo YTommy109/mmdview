@@ -8,6 +8,7 @@ import webview
 from webview import FileDialog
 from webview.menu import Menu, MenuAction, MenuSeparator
 
+from backend.logger import logger
 from backend.main import app
 from backend.paths import WINDOW_STATE_FILE
 from backend.services.watch_service import watch_service
@@ -70,6 +71,10 @@ def _open_file_from_menu(window: webview.Window) -> None:
 def main() -> None:
     import sys
 
+    from backend.version import __version__
+
+    logger.info("mmdview %s starting: argv=%s", __version__, sys.argv)
+
     port = _find_free_port()
     state = _load_window_state()
 
@@ -82,6 +87,7 @@ def main() -> None:
     _wait_for_server(port)
 
     def _on_open_file(path: str) -> None:
+        logger.info("_on_open_file called: path=%s", path)
         watch_service.set_file(path)
 
         def _reload() -> None:
