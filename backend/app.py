@@ -123,12 +123,14 @@ def main() -> None:
         )
     ]
 
+    # Register handler before webview.start() so it's in place when the AppKit
+    # run loop starts processing the odoc event sent by macOS on "Open With" launch.
+    from backend.apple_events import register_open_file_handler
     from backend.update_window import setup_app_menu
 
-    def _on_webview_ready() -> None:
-        from backend.apple_events import register_open_file_handler
+    register_open_file_handler(_on_open_file)
 
-        register_open_file_handler(_on_open_file)
+    def _on_webview_ready() -> None:
         setup_app_menu(port)
 
     webview.start(menu=menu, func=_on_webview_ready)
