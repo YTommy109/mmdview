@@ -13,6 +13,7 @@ from webview.menu import Menu, MenuAction, MenuSeparator
 from backend.logger import logger
 from backend.main import app
 from backend.paths import WINDOW_STATE_FILE
+from backend.services.recent_files_service import recent_files_service
 from backend.services.watch_service import watch_service
 
 _DEFAULT_STATE: dict = {"x": 100, "y": 100, "width": 1024, "height": 768, "last_file": None}
@@ -66,8 +67,28 @@ def _open_file_from_menu(window: webview.Window) -> None:
         file_types=("Mermaid files (*.mmd;*.mermaid)", "All files (*.*)"),
     )
     if result:
+        recent_files_service.add(result[0])
         watch_service.set_file(result[0])
         window.evaluate_js("window.location.reload()")
+
+
+def _build_open_recent_menu(window: webview.Window) -> Menu:
+    recent = recent_files_service.get()
+
+    def _open_recent(path: str) -> None:
+        recent_files_service.add(path)
+        watch_service.set_file(path)
+        window.evaluate_js("window.location.reload()")
+
+    if recent:
+        items: list = [
+            MenuAction(p, lambda p=p: _open_recent(p)) for p in recent
+        ]
+        items += [MenuSeparator(), MenuAction("Clear Menu", recent_files_service.clear)]
+    else:
+        items = [MenuAction("No Recent Files", lambda: None)]
+
+    return Menu("Open Recent...", items)
 
 
 def _patch_app_delegate_for_open_file(callback: Callable[[str], None]) -> None:
@@ -107,6 +128,7 @@ def main() -> None:
     def _on_open_file(path: str) -> None:
         logger.info("_on_open_file called: path=%s", path)
         try:
+            recent_files_service.add(path)
             watch_service.set_file(path)
         except Exception:
             import traceback
@@ -152,6 +174,7 @@ def main() -> None:
             "File",
             [
                 MenuAction("Open...", lambda: _open_file_from_menu(window)),
+                _build_open_recent_menu(window),
                 MenuSeparator(),
                 MenuAction("Close", window.destroy),
             ],
