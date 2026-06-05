@@ -9,6 +9,7 @@ dependencies = [
     "watchdog>=6.0",
     "sse-starlette>=2.1",
     "jinja2>=3.1",
+    "pyobjc-framework-Cocoa>=10.0; sys_platform == 'darwin'",
 ]
 
 [dependency-groups]

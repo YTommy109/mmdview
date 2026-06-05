@@ -566,11 +566,12 @@ wheels = [
 
 [[package]]
 name = "mmdview"
-version = "0.2.1"
+version = "0.2.2"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "jinja2" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
     { name = "pywebview" },
     { name = "sse-starlette" },
     { name = "uvicorn", extra = ["standard"] },
@@ -595,6 +596,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.136" },
     { name = "jinja2", specifier = ">=3.1" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=10.0" },
     { name = "pywebview", specifier = ">=6.2" },
     { name = "sse-starlette", specifier = ">=2.1" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.46" },
