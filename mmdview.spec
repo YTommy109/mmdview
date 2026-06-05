@@ -9,6 +9,7 @@ a = Analysis(
         ('static', 'static'),
     ],
     hiddenimports=[
+        'backend.apple_events',
         'backend.routers.html',
         'backend.routers.events',
         'backend.services.event_bus',

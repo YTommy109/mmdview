@@ -1,9 +1,13 @@
 import struct
+import sys
 from collections.abc import Callable
+
+if sys.platform != "darwin":
+    raise ImportError("backend.apple_events is macOS only")
 
 import objc
 from AppKit import NSAppleEventManager
-from Foundation import NSURL, NSObject
+from Foundation import NSObject
 
 _kCoreEventClass = struct.unpack(">I", b"aevt")[0]
 _kAEOpenDocuments = struct.unpack(">I", b"odoc")[0]
@@ -20,8 +24,10 @@ class _OpenFileHandler(NSObject):
     def handleOpenDocuments_withReplyEvent_(self, event, reply) -> None:
         desc = event.paramDescriptorForKeyword_(_keyDirectObject)
         for i in range(1, desc.numberOfItems() + 1):
-            raw = desc.descriptorAtIndex_(i).stringValue()
-            path = NSURL.URLWithString_(raw).path()
+            url = desc.descriptorAtIndex_(i).fileURLValue()
+            if url is None:
+                continue
+            path = url.path()
             if path and self._callback:
                 self._callback(path)
 

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -16,7 +16,7 @@ def test_handler_calls_callback_with_posix_path():
     mock_url.path.return_value = "/Users/user/test.mmd"
 
     mock_desc_item = MagicMock()
-    mock_desc_item.stringValue.return_value = "file:///Users/user/test.mmd"
+    mock_desc_item.fileURLValue.return_value = mock_url
 
     mock_desc = MagicMock()
     mock_desc.numberOfItems.return_value = 1
@@ -25,23 +25,18 @@ def test_handler_calls_callback_with_posix_path():
     mock_event = MagicMock()
     mock_event.paramDescriptorForKeyword_.return_value = mock_desc
 
-    with patch("backend.apple_events.NSURL") as mock_nsurl:
-        mock_nsurl.URLWithString_.return_value = mock_url
-        handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
+    handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
 
     assert received == ["/Users/user/test.mmd"]
 
 
-def test_handler_skips_when_path_is_none():
+def test_handler_skips_when_file_url_is_none():
     received: list[str] = []
     handler = _OpenFileHandler.alloc().init()
     handler._callback = received.append
 
-    mock_url = MagicMock()
-    mock_url.path.return_value = None  # 不正な URL -> スキップ
-
     mock_desc_item = MagicMock()
-    mock_desc_item.stringValue.return_value = "invalid"
+    mock_desc_item.fileURLValue.return_value = None  # fileURLValue が None -> スキップ
 
     mock_desc = MagicMock()
     mock_desc.numberOfItems.return_value = 1
@@ -50,9 +45,7 @@ def test_handler_skips_when_path_is_none():
     mock_event = MagicMock()
     mock_event.paramDescriptorForKeyword_.return_value = mock_desc
 
-    with patch("backend.apple_events.NSURL") as mock_nsurl:
-        mock_nsurl.URLWithString_.return_value = mock_url
-        handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
+    handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
 
     assert received == []
 
@@ -67,16 +60,14 @@ def test_handler_processes_multiple_files():
         m.path.return_value = path
         return m
 
-    def make_desc_item(raw: str) -> MagicMock:
+    urls = [make_url("/a.mmd"), make_url("/b.mermaid")]
+
+    def make_desc_item(url: MagicMock) -> MagicMock:
         m = MagicMock()
-        m.stringValue.return_value = raw
+        m.fileURLValue.return_value = url
         return m
 
-    items = [
-        make_desc_item("file:///a.mmd"),
-        make_desc_item("file:///b.mermaid"),
-    ]
-    urls = [make_url("/a.mmd"), make_url("/b.mermaid")]
+    items = [make_desc_item(urls[0]), make_desc_item(urls[1])]
 
     mock_desc = MagicMock()
     mock_desc.numberOfItems.return_value = 2
@@ -85,10 +76,6 @@ def test_handler_processes_multiple_files():
     mock_event = MagicMock()
     mock_event.paramDescriptorForKeyword_.return_value = mock_desc
 
-    with patch("backend.apple_events.NSURL") as mock_nsurl:
-        mock_nsurl.URLWithString_.side_effect = lambda raw: urls[
-            ["file:///a.mmd", "file:///b.mermaid"].index(raw)
-        ]
-        handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
+    handler.handleOpenDocuments_withReplyEvent_(mock_event, None)
 
     assert received == ["/a.mmd", "/b.mermaid"]
