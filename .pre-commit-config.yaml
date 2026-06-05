@@ -8,6 +8,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: uv-lock-sync
+        name: uv lock sync
+        entry: bash -c 'uv lock && git add uv.lock'
+        language: system
+        pass_filenames: false
+        files: ^(pyproject\.toml|uv\.lock)$
+
       - id: ty
         name: ty
         entry: uv run ty check
