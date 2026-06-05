@@ -21,7 +21,7 @@ class EventBus:
     def notify(self, event: str = "reload") -> None:
         if self._loop is None:
             return
-        for q in self._listeners:
+        for q in list(self._listeners):  # ← list() でスナップショットを作成
             self._loop.call_soon_threadsafe(q.put_nowait, event)
 
 
