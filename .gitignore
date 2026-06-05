@@ -8,8 +8,7 @@ dist/
 build/
 *.spec.bak
 .superpowers/
-.claude
-.claude/
+.claude/settings.local.json
 static/icons/*.icns
 static/icons/*.iconset
 .worktrees/

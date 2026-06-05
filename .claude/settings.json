@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f \".pre-commit-config.yaml\" ] && ! [ -f \"$(git rev-parse --git-common-dir)/hooks/pre-commit\" ]; then uv run pre-commit install; fi",
+            "statusMessage": "pre-commit フックをインストール中..."
+          }
+        ]
+      }
+    ]
+  }
+}
