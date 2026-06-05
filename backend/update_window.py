@@ -52,10 +52,29 @@ try:
             app_menu.insertItem_atIndex_(sep, 1)
             app_menu.insertItem_atIndex_(item, 2)
 
+            # macOS 標準の位置: Application メニュー → File → Edit → ...
+            # pywebview はカスタムメニューを Edit/View の後ろに追加するため
+            _reposition_file_menu(main_menu)
+
     _APPKIT_AVAILABLE = True
 
 except ImportError:
     _APPKIT_AVAILABLE = False
+
+
+def _reposition_file_menu(main_menu: object) -> None:
+    """File メニューを Application メニューの直後（インデックス 1）に移動する。
+
+    pywebview はカスタムメニューを Edit/View の後ろに追加するため、
+    macOS 標準の順序（App → File → Edit → ...）に補正する。
+    """
+    for i in range(main_menu.numberOfItems()):  # type: ignore[union-attr]
+        menu_item = main_menu.itemAtIndex_(i)  # type: ignore[union-attr]
+        if menu_item.title() == "File":
+            if i != 1:
+                main_menu.removeItem_(menu_item)  # type: ignore[union-attr]
+                main_menu.insertItem_atIndex_(menu_item, 1)  # type: ignore[union-attr]
+            break
 
 
 def open_update_dialog(port: int) -> None:
