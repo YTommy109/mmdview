@@ -28,17 +28,29 @@ class _OpenFileHandler(NSObject):
         logger.info("handleOpenDocuments_withReplyEvent_ called")
         try:
             desc = event.paramDescriptorForKeyword_(_keyDirectObject)
+            if desc is None:
+                logger.error("odoc event: paramDescriptorForKeyword_ returned None")
+                return
             count = desc.numberOfItems()
             logger.info("odoc event: %d item(s)", count)
             for i in range(1, count + 1):
-                url = desc.descriptorAtIndex_(i).fileURLValue()
+                item = desc.descriptorAtIndex_(i)
+                if item is None:
+                    logger.error("odoc event: descriptorAtIndex_(%d) returned None", i)
+                    continue
+                url = item.fileURLValue()
                 if url is None:
-                    logger.warning("descriptorAtIndex_(%d).fileURLValue() returned None", i)
+                    logger.error("odoc event: item[%d].fileURLValue() returned None", i)
                     continue
                 path = url.path()
                 logger.info("received path[%d]: %s", i, path)
-                if path and self._callback:
-                    self._callback(path)
+                if not path:
+                    logger.error("odoc event: item[%d] url.path() is empty", i)
+                    continue
+                if self._callback is None:
+                    logger.error("odoc event: callback is None, cannot handle path=%s", path)
+                    continue
+                self._callback(path)
         except Exception:
             logger.error(
                 "exception in handleOpenDocuments_withReplyEvent_:\n%s",

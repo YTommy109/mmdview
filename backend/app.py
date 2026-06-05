@@ -88,11 +88,22 @@ def main() -> None:
 
     def _on_open_file(path: str) -> None:
         logger.info("_on_open_file called: path=%s", path)
-        watch_service.set_file(path)
+        try:
+            watch_service.set_file(path)
+        except Exception:
+            import traceback
+
+            logger.error("watch_service.set_file failed: path=%s\n%s", path, traceback.format_exc())
+            return
 
         def _reload() -> None:
-            for win in webview.windows:
-                win.evaluate_js("window.location.reload()")
+            try:
+                for win in webview.windows:
+                    win.evaluate_js("window.location.reload()")
+            except Exception:
+                import traceback
+
+                logger.error("_reload failed:\n%s", traceback.format_exc())
 
         threading.Thread(target=_reload, daemon=True).start()
 

@@ -1,9 +1,11 @@
+import traceback
 from pathlib import Path
 from typing import Any
 
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
+from backend.logger import logger
 from backend.services.event_bus import EventBus
 from backend.services.event_bus import event_bus as _default_bus
 
@@ -28,13 +30,21 @@ class WatchService:
         self._path: Path | None = None
 
     def set_file(self, path: str) -> None:
+        logger.info("set_file: path=%s", path)
         self.stop()
         self._path = Path(path)
+        if not self._path.exists():
+            logger.error("set_file: file not found: %s", self._path)
         observer = Observer()
         handler = _ChangeHandler(self._path, self._bus)
         observer.schedule(handler, str(self._path.parent), recursive=False)
-        observer.start()
+        try:
+            observer.start()
+        except Exception:
+            logger.error("set_file: observer.start() failed:\n%s", traceback.format_exc())
+            raise
         self._observer = observer
+        logger.info("set_file: watching %s", self._path)
 
     def get_content(self) -> str | None:
         if self._path is None or not self._path.exists():
