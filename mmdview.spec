@@ -66,5 +66,13 @@ app = BUNDLE(
     info_plist={
         'NSHighResolutionCapable': True,
         "CFBundleShortVersionString": "0.2.2",
+        'CFBundleDocumentTypes': [
+            {
+                'CFBundleTypeName': 'Mermaid Diagram',
+                'CFBundleTypeExtensions': ['mmd', 'mermaid'],
+                'CFBundleTypeRole': 'Viewer',
+                'LSHandlerRank': 'Owner',
+            }
+        ],
     },
 )
