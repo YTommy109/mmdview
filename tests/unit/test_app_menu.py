@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
 from webview.menu import Menu, MenuAction, MenuSeparator
 
 from backend.app import _build_open_recent_menu, _open_file_from_menu

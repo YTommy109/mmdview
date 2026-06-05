@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from backend.services.recent_files_service import RecentFilesService
