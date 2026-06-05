@@ -1,7 +1,9 @@
 import json
 import socket
+import sys
 import threading
 import time
+from collections.abc import Callable
 
 import uvicorn
 import webview
@@ -68,9 +70,25 @@ def _open_file_from_menu(window: webview.Window) -> None:
         window.evaluate_js("window.location.reload()")
 
 
-def main() -> None:
-    import sys
+def _patch_app_delegate_for_open_file(callback: Callable[[str], None]) -> None:
+    """NSApp.finishLaunching() が odoc ハンドラを上書きするため、
+    applicationDidFinishLaunching_ で再登録するようにパッチを当てる。"""
+    if sys.platform != "darwin":
+        return
+    try:
+        from webview.platforms import cocoa as _cocoa  # type: ignore[import]
 
+        from backend.apple_events import register_open_file_handler
+
+        def _did_finish_launching(self: object, notification: object) -> None:
+            register_open_file_handler(callback)
+
+        _cocoa.BrowserView.AppDelegate.applicationDidFinishLaunching_ = _did_finish_launching
+    except Exception:
+        logger.warning("applicationDidFinishLaunching_ パッチに失敗しました")
+
+
+def main() -> None:
     from backend.version import __version__
 
     logger.info("mmdview %s starting: argv=%s", __version__, sys.argv)
@@ -140,12 +158,11 @@ def main() -> None:
         )
     ]
 
-    # Register handler before webview.start() so it's in place when the AppKit
-    # run loop starts processing the odoc event sent by macOS on "Open With" launch.
     from backend.apple_events import register_open_file_handler
     from backend.update_window import setup_app_menu
 
     register_open_file_handler(_on_open_file)
+    _patch_app_delegate_for_open_file(_on_open_file)
 
     def _on_webview_ready() -> None:
         setup_app_menu(port)
