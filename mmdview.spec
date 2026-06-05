@@ -84,7 +84,16 @@ app = BUNDLE(
                 'CFBundleTypeRole': 'Viewer',
                 'LSHandlerRank': 'Owner',
                 'LSItemContentTypes': ['com.degino.mmdview.mermaid-diagram'],
-            }
+            },
+            {
+                # .mmd files resolve to net.ia.markdown (MindNode) on some systems.
+                # Alternate rank avoids stealing default from markdown editors.
+                'CFBundleTypeName': 'Mermaid Diagram',
+                'CFBundleTypeExtensions': ['mmd', 'mermaid'],
+                'CFBundleTypeRole': 'Viewer',
+                'LSHandlerRank': 'Alternate',
+                'LSItemContentTypes': ['net.ia.markdown'],
+            },
         ],
     },
 )
