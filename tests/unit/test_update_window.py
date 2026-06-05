@@ -72,16 +72,17 @@ def test_open_update_dialog_concurrent_calls_create_one_window():
         create_calls.append(win)
         return win
 
-    with patch("backend.update_window.webview.create_window", side_effect=fake_create_window):
-        with patch("backend.update_window.update_service.invalidate_cache"):
-            threads = [
-                threading.Thread(target=uw.open_update_dialog, args=(8000,)) for _ in range(3)
-            ]
-            for t in threads:
-                t.start()
-            for t in threads:
-                t.join(timeout=2.0)
+    try:
+        with patch("backend.update_window.webview.create_window", side_effect=fake_create_window):
+            with patch("backend.update_window.update_service.invalidate_cache"):
+                threads = [
+                    threading.Thread(target=uw.open_update_dialog, args=(8000,)) for _ in range(3)
+                ]
+                for t in threads:
+                    t.start()
+                for t in threads:
+                    t.join(timeout=2.0)
 
-    assert len(create_calls) == 1, f"Expected 1 window, got {len(create_calls)}"
-
-    uw._update_win = None  # クリーンアップ
+        assert len(create_calls) == 1, f"Expected 1 window, got {len(create_calls)}"
+    finally:
+        uw._update_win = None  # 確実にクリーンアップ
