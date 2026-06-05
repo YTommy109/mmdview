@@ -67,12 +67,23 @@ app = BUNDLE(
     info_plist={
         'NSHighResolutionCapable': True,
         "CFBundleShortVersionString": "0.2.4",
+        'UTExportedTypeDeclarations': [
+            {
+                'UTTypeIdentifier': 'com.degino.mmdview.mermaid-diagram',
+                'UTTypeDescription': 'Mermaid Diagram',
+                'UTTypeConformsTo': ['public.plain-text'],
+                'UTTypeTagSpecification': {
+                    'public.filename-extension': ['mmd', 'mermaid'],
+                },
+            }
+        ],
         'CFBundleDocumentTypes': [
             {
                 'CFBundleTypeName': 'Mermaid Diagram',
                 'CFBundleTypeExtensions': ['mmd', 'mermaid'],
                 'CFBundleTypeRole': 'Viewer',
                 'LSHandlerRank': 'Owner',
+                'LSItemContentTypes': ['com.degino.mmdview.mermaid-diagram'],
             }
         ],
     },
