@@ -71,7 +71,7 @@ def get_progress(request: Request) -> HTMLResponse:
 def do_install(request: Request) -> HTMLResponse:
     result = install_update()
     if result == "not_frozen":
-        return HTMLResponse(content="")
+        return templates.TemplateResponse(request, "partials/update_idle.html", {})
     state = {"percent": 100, "status": f"install_error:{result}"}
     return templates.TemplateResponse(
         request,
