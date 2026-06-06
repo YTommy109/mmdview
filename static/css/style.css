@@ -34,3 +34,62 @@ body {
   align-items: flex-start;
   justify-content: center;
 }
+
+.zoom-controls {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  user-select: none;
+}
+
+.zoom-controls button {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.zoom-controls button:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.zoom-controls button:disabled {
+  color: #bbb;
+  cursor: default;
+}
+
+.zoom-controls button:disabled:hover {
+  background: none;
+}
+
+#zoom-label {
+  min-width: 40px;
+  text-align: center;
+  color: #555;
+  cursor: pointer;
+}
+
+#zoom-label:hover {
+  color: #007aff;
+}
