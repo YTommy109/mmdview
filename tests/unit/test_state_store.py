@@ -1,6 +1,7 @@
 # tests/unit/test_state_store.py
 import json
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from backend.state_store import load_window_states
 
@@ -43,3 +44,43 @@ def test_load_window_states_壊れたJSONで空リストを返す(tmp_path):
     with patch("backend.state_store.WINDOW_STATE_FILE", state_file):
         result = load_window_states()
     assert result == []
+
+
+def test_save_all_states_正常にJSONを書き込む(tmp_path):
+    from backend.state_store import save_all_states
+
+    state_file = tmp_path / "window_state.json"
+
+    mock_win = MagicMock()
+    mock_win.x = 10
+    mock_win.y = 20
+    mock_win.width = 800
+    mock_win.height = 600
+
+    mock_watch = MagicMock()
+    mock_watch.get_path.return_value = Path("/tmp/test.mmd")
+
+    windows = {"w1": mock_win}
+
+    with (
+        patch("backend.state_store.WINDOW_STATE_FILE", state_file),
+        patch("backend.state_store.window_registry.get_watch", return_value=mock_watch),
+    ):
+        save_all_states(windows)
+
+    data = json.loads(state_file.read_text(encoding="utf-8"))
+    assert len(data) == 1
+    assert data[0]["x"] == 10
+    assert data[0]["file"] == "/tmp/test.mmd"
+
+
+def test_save_all_states_空ウィンドウで空リストを書き込む(tmp_path):
+    from backend.state_store import save_all_states
+
+    state_file = tmp_path / "window_state.json"
+
+    with patch("backend.state_store.WINDOW_STATE_FILE", state_file):
+        save_all_states({})
+
+    data = json.loads(state_file.read_text(encoding="utf-8"))
+    assert data == []
