@@ -566,7 +566,7 @@ wheels = [
 
 [[package]]
 name = "mmdview"
-version = "0.2.15"
+version = "0.2.16"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

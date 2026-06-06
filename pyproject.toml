@@ -1,6 +1,6 @@
 [project]
 name = "mmdview"
-version = "0.2.15"
+version = "0.2.16"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.136",
@@ -77,7 +77,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.bumpversion]
-current_version = "0.2.15"
+current_version = "0.2.16"
 commit = true
 commit_args = "--no-verify"
 message = "chore: バージョンを {current_version} から {new_version} に更新する"
