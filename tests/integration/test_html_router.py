@@ -32,3 +32,19 @@ def test_index_shows_viewer_when_file_registered(client, tmp_path):
     response = client.get("/?window_id=w1")
     assert response.status_code == 200
     assert "graph TD" in response.text
+
+
+def test_viewer_has_zoom_controls(client, tmp_path):
+    f = tmp_path / "test.mmd"
+    f.write_text("graph TD\n    A --> B", encoding="utf-8")
+    from backend.services.window_registry import window_registry
+
+    window_registry.create("w2", str(f))
+
+    response = client.get("/?window_id=w2")
+    assert response.status_code == 200
+    assert 'id="diagram-wrap"' in response.text
+    assert 'id="zoom-in"' in response.text
+    assert 'id="zoom-out"' in response.text
+    assert 'id="zoom-label"' in response.text
+    assert 'class="zoom-controls"' in response.text
