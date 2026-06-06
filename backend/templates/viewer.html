@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="viewer">
-  <pre class="mermaid">{{ content }}</pre>
+  <div id="diagram-wrap">
+    <pre class="mermaid">{{ content }}</pre>
+  </div>
 </div>
+
+<div class="zoom-controls">
+  <button id="zoom-out" title="縮小 (Cmd −)">−</button>
+  <span id="zoom-label" title="クリックでリセット">100%</span>
+  <button id="zoom-in" title="拡大 (Cmd +)">+</button>
+</div>
+
 <script src="/static/js/mermaid.min.js"></script>
 <script>
   mermaid.initialize({
@@ -18,10 +27,67 @@
     class: { useMaxWidth: false },
   });
 
+  const ZOOM_MIN = 0.5;
+  const ZOOM_MAX = 2.0;
+  const ZOOM_STEP = 0.25;
+
+  let zoom = parseFloat(localStorage.getItem('zoom') || '1');
+
+  const wrap = document.getElementById('diagram-wrap');
+  const label = document.getElementById('zoom-label');
+  const btnIn = document.getElementById('zoom-in');
+  const btnOut = document.getElementById('zoom-out');
+
+  function applyZoom() {
+    zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom));
+    wrap.style.zoom = zoom;
+    label.textContent = Math.round(zoom * 100) + '%';
+    btnIn.disabled = zoom >= ZOOM_MAX;
+    btnOut.disabled = zoom <= ZOOM_MIN;
+    localStorage.setItem('zoom', zoom);
+  }
+
+  btnIn.addEventListener('click', () => {
+    zoom = Math.round((zoom + ZOOM_STEP) * 100) / 100;
+    applyZoom();
+  });
+
+  btnOut.addEventListener('click', () => {
+    zoom = Math.round((zoom - ZOOM_STEP) * 100) / 100;
+    applyZoom();
+  });
+
+  label.addEventListener('click', () => {
+    zoom = 1;
+    applyZoom();
+  });
+
+  document.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    zoom = Math.round((zoom - e.deltaY * 0.01) * 1000) / 1000;
+    applyZoom();
+  }, { passive: false });
+
+  document.addEventListener('keydown', (e) => {
+    if (!e.metaKey) return;
+    if (e.key === '=' || e.key === '+') {
+      e.preventDefault();
+      zoom = Math.round((zoom + ZOOM_STEP) * 100) / 100;
+      applyZoom();
+    } else if (e.key === '-') {
+      e.preventDefault();
+      zoom = Math.round((zoom - ZOOM_STEP) * 100) / 100;
+      applyZoom();
+    }
+  });
+
   const wid = new URLSearchParams(window.location.search).get('window_id') || '';
   const evtSource = new EventSource('/events?window_id=' + encodeURIComponent(wid));
   evtSource.onmessage = (e) => {
     if (e.data === 'reload') window.location.reload();
   };
+
+  applyZoom();
 </script>
 {% endblock %}
