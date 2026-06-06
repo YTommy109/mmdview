@@ -245,11 +245,17 @@ def main() -> None:
 
     def _on_open_file(path: str) -> None:
         logger.info("_on_open_file called: path=%s", path)
-        try:
-            recent_files_service.add(path)
-            _open_file(path, port)
-        except Exception:
-            logger.error("_on_open_file failed: path=%s\n%s", path, traceback.format_exc())
+        recent_files_service.add(path)
+
+        # webview.create_window() は MainThread から呼ぶと生成がスキップされるため
+        # 非メインスレッドに委譲する（odoc Apple Event ハンドラは MainThread で実行される）
+        def _run() -> None:
+            try:
+                _open_file(path, port)
+            except Exception:
+                logger.error("_open_file failed: path=%s\n%s", path, traceback.format_exc())
+
+        threading.Thread(target=_run, daemon=True).start()
 
     # 初期ウィンドウの決定
     if len(sys.argv) > 1:
