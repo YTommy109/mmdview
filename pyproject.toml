@@ -65,7 +65,13 @@ unresolved-import = "warn"
 
 [tool.coverage.run]
 source = ["backend"]
-omit = ["tests/*", "backend/app.py", "backend/update_window.py", "backend/apple_events.py"]
+omit = [
+    "tests/*",
+    "backend/app.py",
+    "backend/window_manager.py",
+    "backend/update_window.py",
+    "backend/apple_events.py",
+]
 
 [tool.coverage.report]
 fail_under = 80
