@@ -57,12 +57,6 @@ class WindowRegistry:
                 return wid
         return None
 
-    def set_path(self, window_id: str, path: str) -> None:
-        entry = self._entries.get(window_id)
-        if entry is None:
-            raise KeyError(window_id)
-        entry.path = Path(path)
-
     def snapshot(self) -> list[tuple[str, Path | None]]:
         return [(wid, entry.path) for wid, entry in self._entries.items()]
 

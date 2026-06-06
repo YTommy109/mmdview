@@ -12,7 +12,7 @@ from backend.services.window_registry import window_registry
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    window_registry.set_loop(asyncio.get_event_loop())
+    window_registry.set_loop(asyncio.get_running_loop())
     yield
 
 
