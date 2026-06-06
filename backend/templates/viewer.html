@@ -18,7 +18,8 @@
     class: { useMaxWidth: false },
   });
 
-  const evtSource = new EventSource('/events');
+  const wid = new URLSearchParams(window.location.search).get('window_id') || '';
+  const evtSource = new EventSource('/events?window_id=' + encodeURIComponent(wid));
   evtSource.onmessage = (e) => {
     if (e.data === 'reload') window.location.reload();
   };
