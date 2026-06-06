@@ -1,3 +1,4 @@
+# backend/main.py
 import asyncio
 from contextlib import asynccontextmanager
 
@@ -6,12 +7,12 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.paths import STATIC_DIR
 from backend.routers import events, html, update
-from backend.services.event_bus import event_bus
+from backend.services.window_registry import window_registry
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    event_bus.set_loop(asyncio.get_event_loop())
+    window_registry.set_loop(asyncio.get_running_loop())
     yield
 
 

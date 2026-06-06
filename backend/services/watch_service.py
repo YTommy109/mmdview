@@ -1,3 +1,4 @@
+# backend/services/watch_service.py
 import traceback
 from pathlib import Path
 from typing import Any
@@ -7,7 +8,6 @@ from watchdog.observers import Observer
 
 from backend.logger import logger
 from backend.services.event_bus import EventBus
-from backend.services.event_bus import event_bus as _default_bus
 
 
 class _ChangeHandler(FileSystemEventHandler):
@@ -25,7 +25,7 @@ class _ChangeHandler(FileSystemEventHandler):
 
 class WatchService:
     def __init__(self, event_bus: EventBus | None = None) -> None:
-        self._bus = event_bus or _default_bus
+        self._bus = event_bus if event_bus is not None else EventBus()
         self._observer: Any = None  # Observer | None; Any avoids watchdog stub limitation
         self._path: Path | None = None
 
@@ -59,6 +59,3 @@ class WatchService:
             self._observer.stop()
             self._observer.join()
             self._observer = None
-
-
-watch_service = WatchService()

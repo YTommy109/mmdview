@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from webview.menu import Menu, MenuAction, MenuSeparator
 
-from backend.app import _activate_file, _build_open_recent_menu, _open_file_from_menu
+from backend.app import _build_open_recent_menu, _open_file_from_menu
 
 
 def _action_titles(menu: Menu) -> list[str]:
@@ -21,14 +21,14 @@ def _has_separator(menu: Menu) -> bool:
 @patch("backend.app.recent_files_service")
 def test_menu_title_is_open_recent(mock_svc):
     mock_svc.get.return_value = []
-    menu = _build_open_recent_menu(MagicMock())
+    menu = _build_open_recent_menu(8080)
     assert menu.title == "Open Recent..."
 
 
 @patch("backend.app.recent_files_service")
 def test_no_recent_files_shows_placeholder(mock_svc):
     mock_svc.get.return_value = []
-    menu = _build_open_recent_menu(MagicMock())
+    menu = _build_open_recent_menu(8080)
     assert _action_titles(menu) == ["No Recent Files"]
     assert not _has_separator(menu)
 
@@ -36,7 +36,7 @@ def test_no_recent_files_shows_placeholder(mock_svc):
 @patch("backend.app.recent_files_service")
 def test_recent_files_appear_as_menu_items(mock_svc):
     mock_svc.get.return_value = ["/a/foo.mmd", "/b/bar.mmd"]
-    menu = _build_open_recent_menu(MagicMock())
+    menu = _build_open_recent_menu(8080)
     titles = _action_titles(menu)
     assert "/a/foo.mmd" in titles
     assert "/b/bar.mmd" in titles
@@ -45,19 +45,19 @@ def test_recent_files_appear_as_menu_items(mock_svc):
 @patch("backend.app.recent_files_service")
 def test_recent_files_menu_has_separator_and_clear(mock_svc):
     mock_svc.get.return_value = ["/a/foo.mmd"]
-    menu = _build_open_recent_menu(MagicMock())
+    menu = _build_open_recent_menu(8080)
     assert _has_separator(menu)
     assert "Clear Menu" in _action_titles(menu)
 
 
-@patch("backend.app.watch_service")
+@patch("backend.app._open_file")
 @patch("backend.app.recent_files_service")
-def test_clicking_recent_file_opens_it(mock_recent_svc, mock_watch_svc):
+def test_clicking_recent_file_opens_it(mock_recent_svc, mock_open_file):
     path = "/a/foo.mmd"
     mock_recent_svc.get.return_value = [path]
-    window = MagicMock()
+    port = 8080
 
-    menu = _build_open_recent_menu(window)
+    menu = _build_open_recent_menu(port)
 
     file_action = next(
         item for item in menu.items if isinstance(item, MenuAction) and item.title == path
@@ -65,14 +65,13 @@ def test_clicking_recent_file_opens_it(mock_recent_svc, mock_watch_svc):
     file_action.function()
 
     mock_recent_svc.add.assert_called_once_with(path)
-    mock_watch_svc.set_file.assert_called_once_with(path)
-    window.evaluate_js.assert_called_once_with("window.location.reload()")
+    mock_open_file.assert_called_once_with(path, port)
 
 
 @patch("backend.app.recent_files_service")
 def test_clear_menu_action_calls_clear(mock_svc):
     mock_svc.get.return_value = ["/a/foo.mmd"]
-    menu = _build_open_recent_menu(MagicMock())
+    menu = _build_open_recent_menu(8080)
 
     clear_action = next(
         item for item in menu.items if isinstance(item, MenuAction) and item.title == "Clear Menu"
@@ -87,48 +86,42 @@ def test_clear_menu_action_calls_clear(mock_svc):
 # ---------------------------------------------------------------------------
 
 
-@patch("backend.app.watch_service")
+@patch("backend.app._open_file")
 @patch("backend.app.recent_files_service")
-def test_open_file_adds_to_recent_and_loads(mock_recent_svc, mock_watch_svc):
+@patch("backend.app.webview")
+def test_open_file_adds_to_recent_and_loads(mock_webview, mock_recent_svc, mock_open_file):
     window = MagicMock()
     window.create_file_dialog.return_value = ["/x/diagram.mmd"]
+    mock_webview.windows = [window]
+    port = 8080
 
-    _open_file_from_menu(window)
+    _open_file_from_menu(port)
 
     mock_recent_svc.add.assert_called_once_with("/x/diagram.mmd")
-    mock_watch_svc.set_file.assert_called_once_with("/x/diagram.mmd")
-    window.evaluate_js.assert_called_once_with("window.location.reload()")
+    mock_open_file.assert_called_once_with("/x/diagram.mmd", port)
 
 
-@patch("backend.app.watch_service")
+@patch("backend.app._open_file")
 @patch("backend.app.recent_files_service")
-def test_open_file_cancelled_does_nothing(mock_recent_svc, mock_watch_svc):
+@patch("backend.app.webview")
+def test_open_file_cancelled_does_nothing(mock_webview, mock_recent_svc, mock_open_file):
     window = MagicMock()
     window.create_file_dialog.return_value = None
+    mock_webview.windows = [window]
 
-    _open_file_from_menu(window)
+    _open_file_from_menu(8080)
 
     mock_recent_svc.add.assert_not_called()
-    mock_watch_svc.set_file.assert_not_called()
-    window.evaluate_js.assert_not_called()
+    mock_open_file.assert_not_called()
 
 
-# ---------------------------------------------------------------------------
-# _activate_file
-# ---------------------------------------------------------------------------
-
-
-@patch("backend.app.watch_service")
+@patch("backend.app._open_file")
 @patch("backend.app.recent_files_service")
-def test_activate_file_sets_window_title(mock_recent_svc, mock_watch_svc):
-    window = MagicMock()
-    _activate_file("/some/dir/diagram.mmd", window)
-    assert window.title == "diagram.mmd"
+@patch("backend.app.webview")
+def test_open_file_from_menu_no_windows_does_nothing(mock_webview, mock_recent_svc, mock_open_file):
+    mock_webview.windows = []
 
+    _open_file_from_menu(8080)
 
-@patch("backend.app.watch_service")
-@patch("backend.app.recent_files_service")
-def test_activate_file_sets_title_to_filename_only(mock_recent_svc, mock_watch_svc):
-    window = MagicMock()
-    _activate_file("/Users/alice/projects/sequence.mmd", window)
-    assert window.title == "sequence.mmd"
+    mock_recent_svc.add.assert_not_called()
+    mock_open_file.assert_not_called()
