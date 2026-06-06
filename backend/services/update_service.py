@@ -110,5 +110,11 @@ class UpdateService:
                 return
         threading.Thread(target=self._do_download, args=(url,), daemon=True).start()
 
+    def _reset_for_test(self) -> None:
+        """テスト用: 全状態を初期値にリセットする。"""
+        with self._state_lock:
+            self._cache.update({"checked_at": None, "result": None})
+            self._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
+
 
 update_service = UpdateService()

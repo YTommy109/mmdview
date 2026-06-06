@@ -18,9 +18,9 @@ import backend.services.update_service as svc
 
 @pytest.fixture(autouse=True)
 def reset_download_state():
-    svc.update_service._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
+    svc.update_service._reset_for_test()
     yield
-    svc.update_service._download_state.update({"percent": 0, "status": "idle", "dmg_path": None})
+    svc.update_service._reset_for_test()
 
 
 def _make_plist_bytes(mount_point: str) -> bytes:
