@@ -11,7 +11,6 @@ from backend.services.watch_service import WatchService
 class _Entry:
     watch: WatchService
     bus: EventBus
-    path: Path | None
 
 
 class WindowRegistry:
@@ -31,11 +30,7 @@ class WindowRegistry:
         watch = WatchService(event_bus=bus)
         if file_path:
             watch.set_file(file_path)
-        self._entries[window_id] = _Entry(
-            watch=watch,
-            bus=bus,
-            path=Path(file_path) if file_path else None,
-        )
+        self._entries[window_id] = _Entry(watch=watch, bus=bus)
 
     def get_watch(self, window_id: str) -> WatchService | None:
         entry = self._entries.get(window_id)
@@ -53,12 +48,12 @@ class WindowRegistry:
     def find_by_path(self, path: str) -> str | None:
         p = Path(path)
         for wid, entry in self._entries.items():
-            if entry.path == p:
+            if entry.watch.get_path() == p:
                 return wid
         return None
 
     def snapshot(self) -> list[tuple[str, Path | None]]:
-        return [(wid, entry.path) for wid, entry in self._entries.items()]
+        return [(wid, entry.watch.get_path()) for wid, entry in self._entries.items()]
 
 
 window_registry = WindowRegistry()
