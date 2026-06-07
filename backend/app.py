@@ -2,6 +2,7 @@
 import sys
 import threading
 import traceback
+from pathlib import Path
 
 import webview
 from webview.menu import Menu, MenuAction
@@ -65,8 +66,9 @@ def main() -> None:
         window_manager.create_window(port, file_path=cli_file)
     else:
         states = state_store.load_window_states()
-        if states:
-            for s in states:
+        restorable = [s for s in states if s.get("file") and Path(s["file"]).exists()]
+        if restorable:
+            for s in restorable:
                 window_manager.create_window(
                     port,
                     file_path=s.get("file"),
