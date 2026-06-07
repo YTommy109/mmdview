@@ -60,3 +60,28 @@ def test_viewer_includes_hyperscript(client, tmp_path):
     response = client.get("/?window_id=w-hyper-check")
     assert response.status_code == 200
     assert "_hyperscript.min.js" in response.text
+
+
+def test_viewer_has_sse_connect_with_window_id(client, tmp_path):
+    f = tmp_path / "test.mmd"
+    f.write_text("graph TD\n    A --> B", encoding="utf-8")
+    from backend.services.window_registry import window_registry
+
+    window_registry.create("w-sse-check", str(f))
+
+    response = client.get("/?window_id=w-sse-check")
+    assert response.status_code == 200
+    assert 'sse-connect="/events?window_id=w-sse-check"' in response.text
+
+
+def test_viewer_has_zoom_controller_and_no_viewer_js(client, tmp_path):
+    f = tmp_path / "test.mmd"
+    f.write_text("graph TD\n    A --> B", encoding="utf-8")
+    from backend.services.window_registry import window_registry
+
+    window_registry.create("w-zc-check", str(f))
+
+    response = client.get("/?window_id=w-zc-check")
+    assert response.status_code == 200
+    assert "install ZoomController" in response.text
+    assert "viewer.js" not in response.text

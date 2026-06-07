@@ -21,5 +21,5 @@ async def index(request: Request, window_id: str = "") -> HTMLResponse:
     return templates.TemplateResponse(
         request,
         "viewer.html",
-        {"content": content},
+        {"content": content, "window_id": window_id},
     )
