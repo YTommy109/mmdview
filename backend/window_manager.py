@@ -78,9 +78,9 @@ def create_window(
     window.events.resized += lambda width, height: _schedule_save()
 
     def _on_closed() -> None:
+        state_store.save_all_states(_windows)
         _windows.pop(window_id, None)
         window_registry.remove(window_id)
-        state_store.save_all_states(_windows)
 
     window.events.closed += _on_closed
     return window_id, window
