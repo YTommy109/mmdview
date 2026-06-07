@@ -117,6 +117,29 @@ def open_file_from_menu(port: int) -> None:
         open_file(result[0], port)
 
 
+def open_file_for_window(window_id: str, port: int) -> None:
+    """起動時の空ウィンドウにファイルを読み込む。
+    ファイル選択時は既存ウィンドウを再利用し、キャンセル時はウィンドウを閉じる。"""
+    win = _windows.get(window_id)
+    if win is None:
+        return
+    result = win.create_file_dialog(
+        FileDialog.OPEN,
+        allow_multiple=False,
+        file_types=("Mermaid files (*.mmd;*.mermaid)", "All files (*.*)"),
+    )
+    if result:
+        path = result[0]
+        recent_files_service.add(path)
+        watch = window_registry.get_watch(window_id)
+        if watch:
+            watch.set_file(path)
+        win.set_title(Path(path).name)
+        win.evaluate_js("location.reload()")
+    else:
+        win.destroy()
+
+
 def build_open_recent_menu(port: int) -> Menu:
     recent = recent_files_service.get()
 

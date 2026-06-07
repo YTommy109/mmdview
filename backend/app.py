@@ -57,6 +57,8 @@ def main() -> None:
 
         threading.Thread(target=_run, daemon=True).start()
 
+    startup_blank_id: str | None = None
+
     if len(sys.argv) > 1:
         cli_file = sys.argv[1]
         recent_files_service.add(cli_file)
@@ -74,7 +76,8 @@ def main() -> None:
                     height=s.get("height", 768),
                 )
         else:
-            window_manager.create_window(port)
+            wid, _ = window_manager.create_window(port)
+            startup_blank_id = wid
 
     menu = [
         Menu(
@@ -94,6 +97,8 @@ def main() -> None:
 
     def _on_webview_ready() -> None:
         setup_app_menu(port)
+        if startup_blank_id is not None:
+            window_manager.open_file_for_window(startup_blank_id, port)
 
     webview.start(menu=menu, func=_on_webview_ready)
 
