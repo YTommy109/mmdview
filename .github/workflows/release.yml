@@ -24,6 +24,9 @@ jobs:
       - name: 依存パッケージをインストールする
         run: uv sync --group dev --frozen
 
+      - name: cairo をインストールする
+        run: brew install cairo
+
       - name: アプリをビルドする
         run: uv run task build
 

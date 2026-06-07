@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """SVG → PNG → .icns 変換スクリプト（macOS 専用）"""
 
-import os
-import platform
-import subprocess as _sp
-
-if platform.system() == "Darwin":
-    try:
-        _prefix = _sp.check_output(["brew", "--prefix"], text=True).strip()
-        os.environ.setdefault("DYLD_LIBRARY_PATH", f"{_prefix}/lib")
-    except (FileNotFoundError, _sp.CalledProcessError):
-        pass
-
 import shutil
 import subprocess
 import sys
