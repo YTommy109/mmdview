@@ -11,36 +11,38 @@ behavior ZoomController
   def applyZoom()
     if :zoom < 0.5 set :zoom to 0.5 end
     if :zoom > 2.0 set :zoom to 2.0 end
-    set the style.zoom of #diagram-wrap to :zoom
-    set the textContent of #zoom-label to (Math.round(:zoom * 100) + '%')
-    set #zoom-in.disabled to (:zoom >= 2.0)
-    set #zoom-out.disabled to (:zoom <= 0.5)
-    call localStorage.setItem('mmdview.viewer.zoom', :zoom)
+    js(zoom)
+      document.getElementById('diagram-wrap').style.zoom = zoom;
+      document.getElementById('zoom-label').textContent = Math.round(zoom * 100) + '%';
+      document.getElementById('zoom-in').disabled = zoom >= 2.0;
+      document.getElementById('zoom-out').disabled = zoom <= 0.5;
+      localStorage.setItem('mmdview.viewer.zoom', zoom);
+    end with zoom = :zoom
   end
 
-  on click from #zoom-in
-    set :zoom to Math.round((:zoom + 0.25) * 100) / 100
-    call applyZoom()
-  end
-
-  on click from #zoom-out
-    set :zoom to Math.round((:zoom - 0.25) * 100) / 100
-    call applyZoom()
-  end
-
-  on click from #zoom-label
-    set :zoom to 1
-    call applyZoom()
-  end
-
-  on keydown[metaKey and (key is '=' or key is '+' or key is '-')] from document
-    halt the event
-    if key is '-'
-      set :zoom to Math.round((:zoom - 0.25) * 100) / 100
-    else
+  on click
+    if target is #zoom-in
       set :zoom to Math.round((:zoom + 0.25) * 100) / 100
+      call applyZoom()
+    else if target is #zoom-out
+      set :zoom to Math.round((:zoom - 0.25) * 100) / 100
+      call applyZoom()
+    else if target is #zoom-label
+      set :zoom to 1
+      call applyZoom()
     end
-    call applyZoom()
+  end
+
+  on keydown[metaKey] from document
+    if event.key is '-' or event.key is '=' or event.key is '+'
+      halt the event
+      if event.key is '-'
+        set :zoom to Math.round((:zoom - 0.25) * 100) / 100
+      else
+        set :zoom to Math.round((:zoom + 0.25) * 100) / 100
+      end
+      call applyZoom()
+    end
   end
 
   on wheel[ctrlKey] from document
