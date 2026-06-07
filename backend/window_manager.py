@@ -104,11 +104,21 @@ def open_file(path: str, port: int) -> None:
     create_window(port, file_path=path)
 
 
+def _get_initial_directory() -> str:
+    recent = recent_files_service.get()
+    if recent:
+        parent = Path(recent[0]).parent
+        if parent.is_dir():
+            return str(parent)
+    return str(Path.home() / "Documents")
+
+
 def open_file_from_menu(port: int) -> None:
     if not webview.windows:
         return
     result = webview.windows[0].create_file_dialog(
         FileDialog.OPEN,
+        directory=_get_initial_directory(),
         allow_multiple=False,
         file_types=("Mermaid files (*.mmd;*.mermaid)", "All files (*.*)"),
     )
@@ -125,6 +135,7 @@ def open_file_for_window(window_id: str, port: int) -> None:
         return
     result = win.create_file_dialog(
         FileDialog.OPEN,
+        directory=_get_initial_directory(),
         allow_multiple=False,
         file_types=("Mermaid files (*.mmd;*.mermaid)", "All files (*.*)"),
     )
