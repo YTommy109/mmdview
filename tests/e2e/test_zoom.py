@@ -22,14 +22,14 @@ def test_label_click_resets_zoom(viewer_page: Page):
 
 def test_zoom_clamped_at_maximum(viewer_page: Page):
     for _ in range(10):
-        viewer_page.locator("#zoom-in").click()
+        viewer_page.locator("#zoom-in").click(force=True)
     expect(viewer_page.locator("#zoom-label")).to_have_text("200%")
     expect(viewer_page.locator("#zoom-in")).to_be_disabled()
 
 
 def test_zoom_clamped_at_minimum(viewer_page: Page):
     for _ in range(10):
-        viewer_page.locator("#zoom-out").click()
+        viewer_page.locator("#zoom-out").click(force=True)
     expect(viewer_page.locator("#zoom-label")).to_have_text("50%")
     expect(viewer_page.locator("#zoom-out")).to_be_disabled()
 
@@ -45,14 +45,16 @@ def test_zoom_restored_from_localstorage(browser, server_url):
     context = browser.new_context()
     page1 = context.new_page()
     page1.goto(f"{server_url}/?window_id=e2e")
-    page1.wait_for_load_state("networkidle")
+    page1.wait_for_load_state("load")
+    page1.locator("#zoom-label").wait_for()
     page1.locator("#zoom-in").click()
     page1.locator("#zoom-in").click()
     expect(page1.locator("#zoom-label")).to_have_text("150%")
 
     page2 = context.new_page()
     page2.goto(f"{server_url}/?window_id=e2e")
-    page2.wait_for_load_state("networkidle")
+    page2.wait_for_load_state("load")
+    page2.locator("#zoom-label").wait_for()
     expect(page2.locator("#zoom-label")).to_have_text("150%")
 
     context.close()
@@ -71,7 +73,9 @@ def test_keyboard_cmd_minus_zooms_out(viewer_page: Page):
 def test_ctrl_wheel_zooms_in(viewer_page: Page):
     diagram = viewer_page.locator("#diagram-wrap")
     diagram.scroll_into_view_if_needed()
-    viewer_page.mouse.move(*diagram.bounding_box().values())
+    box = diagram.bounding_box()
+    assert box is not None
+    viewer_page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     viewer_page.keyboard.down("Control")
     viewer_page.mouse.wheel(0, -100)
     viewer_page.keyboard.up("Control")
