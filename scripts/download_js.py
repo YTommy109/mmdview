@@ -16,6 +16,14 @@ LIBS = [
         "name": "mermaid.min.js",
         "url": "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js",
     },
+    {
+        "name": "_hyperscript.min.js",
+        "url": "https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js",
+    },
+    {
+        "name": "htmx-ext-sse.js",
+        "url": "https://unpkg.com/htmx-ext-sse@2.2.2/sse.js",
+    },
 ]
 
 OUT_DIR = Path(__file__).parent.parent / "static" / "js"

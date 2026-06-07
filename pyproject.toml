@@ -24,6 +24,7 @@ dev = [
     "taskipy>=1.13",
     "bump-my-version",
     "cairosvg>=2.9.0",
+    "pytest-playwright>=0.8.0",
 ]
 
 [tool.taskipy.tasks]
@@ -31,6 +32,7 @@ setup        = "pre-commit install --hook-type pre-commit --hook-type post-check
 dev          = "python -m backend.app"
 server       = "uvicorn backend.main:app --reload --port 8000"
 test         = "pytest -v --cov --cov-report=term-missing"
+"test:e2e"   = "pytest tests/e2e -v"
 download_js  = "python scripts/download_js.py"
 pre_build    = "task icon"
 build        = "pyinstaller -y mmdview.spec"

@@ -1,17 +1,107 @@
 {% extends "base.html" %}
 {% block content %}
+
+<script type="text/hyperscript">
+behavior ZoomController
+  init
+    call _mmdInitZoom()
+  end
+
+  on click
+    if target is #zoom-in
+      call _mmdZoomIn()
+    else if target is #zoom-out
+      call _mmdZoomOut()
+    else if target is #zoom-label
+      call _mmdZoomReset()
+    end
+  end
+
+  on keydown[metaKey] from document
+    if event.key is '-' or event.key is '=' or event.key is '+'
+      halt the event
+      if event.key is '-'
+        call _mmdZoomOut()
+      else
+        call _mmdZoomIn()
+      end
+    end
+  end
+
+  on wheel[ctrlKey] from document
+    halt the event
+    js(event)
+      _mmdWheelZoom(event.deltaY);
+    end
+  end
+end
+</script>
+
 <div class="viewer">
   <div id="diagram-wrap">
     <pre class="mermaid">{{ content }}</pre>
   </div>
 </div>
 
-<div class="zoom-controls">
+<div class="zoom-controls" _="install ZoomController">
   <button id="zoom-out" title="縮小 (Cmd −)">−</button>
   <span id="zoom-label" title="クリックでリセット">100%</span>
   <button id="zoom-in" title="拡大 (Cmd +)">+</button>
 </div>
 
+<div hx-ext="sse"
+     sse-connect="/events?window_id={{ window_id }}"
+     _="on sse:message
+          if event.detail.data is 'reload'
+            call location.reload()">
+</div>
+
 <script src="/static/js/mermaid.min.js"></script>
-<script src="/static/js/viewer.js"></script>
+<script src="/static/js/htmx-ext-sse.js"></script>
+<script>
+var _mmdZoom = 1;
+function _mmdInitZoom() {
+  var z = parseFloat(localStorage.getItem('mmdview.viewer.zoom'));
+  _mmdZoom = isNaN(z) ? 1 : z;
+  _mmdApplyZoom();
+}
+function _mmdApplyZoom() {
+  if (_mmdZoom < 0.5) _mmdZoom = 0.5;
+  if (_mmdZoom > 2.0) _mmdZoom = 2.0;
+  document.getElementById('diagram-wrap').style.zoom = _mmdZoom;
+  document.getElementById('zoom-label').textContent = Math.round(_mmdZoom * 100) + '%';
+  document.getElementById('zoom-in').disabled = _mmdZoom >= 2.0;
+  document.getElementById('zoom-out').disabled = _mmdZoom <= 0.5;
+  localStorage.setItem('mmdview.viewer.zoom', _mmdZoom);
+}
+function _mmdZoomIn() {
+  _mmdZoom = Math.round((_mmdZoom + 0.25) * 100) / 100;
+  _mmdApplyZoom();
+}
+function _mmdZoomOut() {
+  _mmdZoom = Math.round((_mmdZoom - 0.25) * 100) / 100;
+  _mmdApplyZoom();
+}
+function _mmdZoomReset() {
+  _mmdZoom = 1;
+  _mmdApplyZoom();
+}
+function _mmdWheelZoom(deltaY) {
+  _mmdZoom = Math.round((_mmdZoom - deltaY * 0.01) * 1000) / 1000;
+  _mmdApplyZoom();
+}
+
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'default',
+  sequence: { useMaxWidth: false },
+  er: { useMaxWidth: false },
+  flowchart: { useMaxWidth: false },
+  gantt: { useMaxWidth: false },
+  journey: { useMaxWidth: false },
+  pie: { useMaxWidth: false },
+  state: { useMaxWidth: false },
+  class: { useMaxWidth: false },
+});
+</script>
 {% endblock %}
