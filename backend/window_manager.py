@@ -15,10 +15,18 @@ from backend.services.window_registry import window_registry
 
 _windows: dict[str, webview.Window] = {}
 _state_cache: dict[str, dict] = {}  # window_id → {x, y, width, height} の最終既知状態
+_terminating: bool = False
 
 
 def get_windows() -> dict[str, webview.Window]:
     return dict(_windows)
+
+
+def save_all_for_terminate() -> None:
+    """アプリ終了前に全ウィンドウ状態を保存する。applicationWillTerminate_ から呼ぶ。"""
+    global _terminating
+    _terminating = True
+    state_store.save_all_states(_windows, _state_cache)
 
 
 def focus_window(window: webview.Window) -> None:
@@ -88,10 +96,11 @@ def create_window(
     window.events.resized += lambda width, height: _schedule_save()
 
     def _on_closed() -> None:
-        state_store.save_all_states(_windows, _state_cache)
         _windows.pop(window_id, None)
         window_registry.remove(window_id)
         _state_cache.pop(window_id, None)
+        if not _terminating:
+            state_store.save_all_states(_windows, _state_cache)
 
     window.events.closed += _on_closed
     return window_id, window

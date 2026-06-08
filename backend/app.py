@@ -37,8 +37,13 @@ def _patch_app_delegate_for_open_file(callback) -> None:
             callback(str(filename))
             return True
 
+        def _application_will_terminate(self: object, notification: object) -> None:
+            logger.info("applicationWillTerminate_ fired: saving all window states")
+            window_manager.save_all_for_terminate()
+
         _cocoa.BrowserView.AppDelegate.applicationDidFinishLaunching_ = _did_finish_launching
         _cocoa.BrowserView.AppDelegate.application_openFile_ = _application_open_file
+        _cocoa.BrowserView.AppDelegate.applicationWillTerminate_ = _application_will_terminate
         logger.info("AppDelegate patches applied successfully")
     except Exception:
         logger.warning("AppDelegate パッチに失敗しました\n%s", traceback.format_exc())

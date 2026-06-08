@@ -49,3 +49,16 @@ def test_application_open_file_converts_filename_to_str():
     fn(None, None, mock_nsstring)
 
     assert received[0] == str(mock_nsstring)
+
+
+def test_application_will_terminate_calls_save_all_for_terminate():
+    """applicationWillTerminate_ が save_all_for_terminate を呼ぶことを確認する。"""
+    import backend.window_manager as wm
+
+    delegate = _apply_patch(lambda p: None)
+
+    with patch.object(wm, "save_all_for_terminate") as mock_save:
+        fn = delegate.applicationWillTerminate_
+        fn(None, None)
+
+    mock_save.assert_called_once()
