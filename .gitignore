@@ -9,6 +9,7 @@ build/
 *.spec.bak
 .superpowers/
 .claude/settings.local.json
+.claude/settings.json.bak
 static/icons/*.icns
 static/icons/*.iconset
 .worktrees/
