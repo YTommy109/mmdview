@@ -13,7 +13,7 @@ fi
 
 ROOT="$(dirname "$COMMON_DIR")"
 
-for name in .envrc .claude .dagayn; do
+for name in .envrc .claude; do
   TARGET="$(pwd)/$name"
   if [ ! -e "$TARGET" ]; then
     ln -sfn "$ROOT/$name" "$TARGET"
@@ -21,3 +21,4 @@ for name in .envrc .claude .dagayn; do
 done
 
 uv sync
+dagayn build --skip-flows
