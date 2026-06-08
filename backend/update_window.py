@@ -56,11 +56,35 @@ try:
             # macOS 標準の位置: Application メニュー → File → Edit → ...
             # pywebview はカスタムメニューを Edit/View の後ろに追加するため
             _reposition_file_menu(main_menu)
+            _set_open_shortcut(main_menu)
 
     _APPKIT_AVAILABLE = True
 
 except ImportError:
     _APPKIT_AVAILABLE = False
+
+
+def _set_open_shortcut(main_menu: object) -> None:
+    """File → Open... に ⌘O ショートカットを設定する。
+
+    pywebview は MenuAction をキー割り当てなしで作成するため、AppKit で直接設定する。
+    """
+    if not _APPKIT_AVAILABLE:
+        return
+    for i in range(main_menu.numberOfItems()):  # type: ignore[union-attr]
+        item = main_menu.itemAtIndex_(i)  # type: ignore[union-attr]
+        if item.title() == "File":
+            submenu = item.submenu()
+            if submenu is None:
+                return
+            for j in range(submenu.numberOfItems()):
+                sub_item = submenu.itemAtIndex_(j)
+                if sub_item.title() == "Open...":
+                    sub_item.setKeyEquivalent_("o")
+                    sub_item.setKeyEquivalentModifierMask_(
+                        _AppKit.NSEventModifierFlagCommand  # type: ignore[union-attr]
+                    )
+                    return
 
 
 def _reposition_file_menu(main_menu: object) -> None:
