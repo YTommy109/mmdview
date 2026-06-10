@@ -111,7 +111,12 @@ mermaid.run({ querySelector: '.mermaid' });
 (function() {
   var es = new EventSource('/events?window_id={{ window_id }}');
   es.onmessage = function(e) {
-    if (e.data === 'reload') location.reload();
+    if (e.data === 'reload') {
+      location.reload();
+    } else if (e.data === 'deleted') {
+      document.title = _mmdFilename + ' (deleted)';
+      document.body.style.background = '#e8e8e8';
+    }
   };
 })();
 </script>
