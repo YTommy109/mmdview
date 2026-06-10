@@ -32,6 +32,8 @@ class _ChangeHandler(FileSystemEventHandler):
     def on_moved(self, event: FileSystemEvent) -> None:
         # アトミックセーブは一時ファイルからの rename 置き換えとして届く
         self._maybe_notify(event.dest_path)
+        # ファイルが別パスへ移動された場合は削除として扱う
+        self._maybe_notify(event.src_path)
 
     def on_deleted(self, event: FileSystemEvent) -> None:
         self._maybe_notify(event.src_path)

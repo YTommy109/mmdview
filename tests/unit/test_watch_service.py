@@ -178,3 +178,13 @@ def test_handler_on_deleted_target_notifies_deleted(tmp_mmd):
     handler.on_deleted(FileDeletedEvent(str(tmp_mmd)))
     assert _wait_for_notify(bus)
     assert bus.notified == ["deleted"]
+
+
+def test_handler_on_moved_away_notifies_deleted(tmp_mmd, tmp_path):
+    bus = _TrackingBus()
+    handler = _ChangeHandler(tmp_mmd, bus, debounce=0.01)
+    new_path = tmp_path / "renamed.mmd"
+    tmp_mmd.rename(new_path)
+    handler.on_moved(FileMovedEvent(str(tmp_mmd), str(new_path)))
+    assert _wait_for_notify(bus)
+    assert bus.notified == ["deleted"]
