@@ -74,7 +74,9 @@ class WatchService:
             logger.error("set_file: file not found: %s", self._path)
         observer = Observer()
         handler = _ChangeHandler(self._path, self._bus, debounce=self._debounce)
-        observer.schedule(handler, str(self._path.parent), recursive=False)
+        # inotify(Linux)はシンボリックリンクを辿らないため、実体の親ディレクトリを監視する
+        watch_dir = self._path.resolve().parent
+        observer.schedule(handler, str(watch_dir), recursive=False)
         try:
             observer.start()
         except Exception:
