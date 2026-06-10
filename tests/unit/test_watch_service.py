@@ -2,7 +2,26 @@ import time
 
 import pytest
 
+from backend.services.event_bus import EventBus
 from backend.services.watch_service import WatchService
+
+
+class _TrackingBus(EventBus):
+    def __init__(self) -> None:
+        super().__init__()
+        self.notified: list[str] = []
+
+    def notify(self, event: str = "reload") -> None:
+        self.notified.append(event)
+
+
+def _wait_for_notify(bus: _TrackingBus, timeout: float = 3.0) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if bus.notified:
+            return True
+        time.sleep(0.05)
+    return False
 
 
 @pytest.fixture
@@ -52,21 +71,10 @@ def test_stop_kills_observer(tmp_mmd):
 
 
 def test_notify_called_on_file_change(tmp_mmd):
-    from backend.services.event_bus import EventBus
-
-    class _TrackingBus(EventBus):
-        def __init__(self) -> None:
-            super().__init__()
-            self.notified: list[str] = []
-
-        def notify(self, event: str = "reload") -> None:
-            self.notified.append(event)
-
     bus = _TrackingBus()
     svc = WatchService(event_bus=bus)
     svc.set_file(str(tmp_mmd))
     tmp_mmd.write_text("graph TD\n    A --> C", encoding="utf-8")
-    time.sleep(0.5)
+    assert _wait_for_notify(bus)
     svc.stop()
-
     assert "reload" in bus.notified
