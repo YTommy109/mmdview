@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -21,5 +23,5 @@ async def index(request: Request, window_id: str = "") -> HTMLResponse:
     return templates.TemplateResponse(
         request,
         "viewer.html",
-        {"content": content, "window_id": window_id},
+        {"content": content, "window_id": window_id, "filename_json": json.dumps(path.name)},
     )

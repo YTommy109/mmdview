@@ -85,3 +85,14 @@ def test_viewer_has_zoom_controller_and_no_viewer_js(client, tmp_path):
     assert response.status_code == 200
     assert "install ZoomController" in response.text
     assert "viewer.js" not in response.text
+
+
+def test_viewer_renders_filename_as_js_variable(client, tmp_path):
+    f = tmp_path / "mydiagram.mmd"
+    f.write_text("graph TD\n    A --> B", encoding="utf-8")
+    from backend.services.window_registry import window_registry
+
+    window_registry.create("w-fn-check", str(f))
+    response = client.get("/?window_id=w-fn-check")
+    assert response.status_code == 200
+    assert 'var _mmdFilename = "mydiagram.mmd"' in response.text
