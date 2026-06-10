@@ -93,3 +93,19 @@ body {
 #zoom-label:hover {
   color: #007aff;
 }
+
+.mmd-error-panel {
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  background: #fff5f5;
+  border-left: 4px solid #e53e3e;
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #c53030;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

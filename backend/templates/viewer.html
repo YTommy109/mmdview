@@ -38,6 +38,7 @@ end
 </script>
 
 <div class="viewer">
+  <div id="mmd-error" class="mmd-error-panel"></div>
   <div id="diagram-wrap">
     <pre class="mermaid">{{ content }}</pre>
   </div>
@@ -93,7 +94,7 @@ function _mmdWheelZoom(deltaY) {
 }
 
 mermaid.initialize({
-  startOnLoad: true,
+  startOnLoad: false,
   theme: 'default',
   sequence: { useMaxWidth: false },
   er: { useMaxWidth: false },
@@ -104,5 +105,14 @@ mermaid.initialize({
   state: { useMaxWidth: false },
   class: { useMaxWidth: false },
 });
+
+mermaid.parseError = function(err) {
+  var panel = document.getElementById('mmd-error');
+  panel.textContent = err;
+  panel.style.display = 'block';
+  document.getElementById('diagram-wrap').style.display = 'none';
+};
+
+mermaid.run({ querySelector: '.mermaid' });
 </script>
 {% endblock %}
