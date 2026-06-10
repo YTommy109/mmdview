@@ -1,3 +1,4 @@
+import threading
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,17 +14,19 @@ import backend.apple_events  # noqa: F401, E402
 from backend.app import _patch_app_delegate_for_open_file  # noqa: E402
 
 
-def _apply_patch(callback):
+def _apply_patch(callback, launch_finished: threading.Event | None = None):
     """モックした AppDelegate クラスにパッチを当て、クラスを返す。"""
     mock_cocoa = MagicMock()
     mock_delegate_class = MagicMock()
     mock_cocoa.BrowserView.AppDelegate = mock_delegate_class
+    if launch_finished is None:
+        launch_finished = threading.Event()
 
     with (
         patch.dict("sys.modules", {"webview.platforms.cocoa": mock_cocoa}),
         patch("backend.apple_events.register_open_file_handler"),
     ):
-        _patch_app_delegate_for_open_file(callback)
+        _patch_app_delegate_for_open_file(callback, launch_finished)
 
     return mock_delegate_class
 
@@ -49,6 +52,17 @@ def test_application_open_file_converts_filename_to_str():
     fn(None, None, mock_nsstring)
 
     assert received[0] == str(mock_nsstring)
+
+
+def test_did_finish_launching_sets_launch_finished_event():
+    """applicationDidFinishLaunching_ が launch_finished イベントをセットすることを確認する。"""
+    launch_finished = threading.Event()
+    delegate = _apply_patch(lambda p: None, launch_finished)
+
+    fn = delegate.applicationDidFinishLaunching_
+    fn(None, None)
+
+    assert launch_finished.is_set()
 
 
 def test_application_will_terminate_calls_save_all_for_terminate():
