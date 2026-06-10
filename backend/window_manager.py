@@ -106,6 +106,21 @@ def create_window(
     return window_id, window
 
 
+def load_file_into_window(window_id: str, path: str) -> bool:
+    """既存ウィンドウにファイルを読み込み、タイトルを更新して再表示する。
+    ウィンドウが存在しなければ False を返す。"""
+    win = _windows.get(window_id)
+    if win is None:
+        return False
+    logger.info("load_file_into_window: window_id=%s path=%s", window_id, path)
+    watch = window_registry.get_watch(window_id)
+    if watch:
+        watch.set_file(path)
+    win.set_title(Path(path).name)
+    win.evaluate_js("location.reload()")
+    return True
+
+
 def open_file(path: str, port: int) -> None:
     """ファイルを開く。既に開いていれば既存ウィンドウをフォーカスし、なければ新規作成。"""
     existing_id = window_registry.find_by_path(path)
@@ -160,13 +175,8 @@ def open_file_for_window(window_id: str, port: int) -> None:
         file_types=("Mermaid files (*.mmd;*.mermaid)", "All files (*.*)"),
     )
     if result:
-        path = result[0]
-        recent_files_service.add(path)
-        watch = window_registry.get_watch(window_id)
-        if watch:
-            watch.set_file(path)
-        win.set_title(Path(path).name)
-        win.evaluate_js("location.reload()")
+        recent_files_service.add(result[0])
+        load_file_into_window(window_id, result[0])
     else:
         win.destroy()
 
