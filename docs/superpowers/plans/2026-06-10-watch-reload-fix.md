@@ -39,7 +39,7 @@
 **Files:**
 - Modify: `tests/unit/test_watch_service.py`
 
-- [ ] **Step 1: ヘルパーを追加し既存テストを書き換える**
+- [x] **Step 1: ヘルパーを追加し既存テストを書き換える**
 
 `tests/unit/test_watch_service.py` の import 部とファイル末尾の
 `test_notify_called_on_file_change` を以下のように変更する:
@@ -85,12 +85,12 @@ def test_notify_called_on_file_change(tmp_mmd):
     assert "reload" in bus.notified
 ```
 
-- [ ] **Step 2: テストが green のままであることを確認する**
+- [x] **Step 2: テストが green のままであることを確認する**
 
 Run: `uv run pytest tests/unit/test_watch_service.py -q`
 Expected: `7 passed`
 
-- [ ] **Step 3: コミット**
+- [x] **Step 3: コミット**
 
 ```bash
 git add tests/unit/test_watch_service.py
@@ -105,7 +105,7 @@ git commit -m "test: watch_service テストのヘルパーをモジュールレ
 - Modify: `backend/services/watch_service.py:13-23`(`_ChangeHandler`)
 - Test: `tests/unit/test_watch_service.py`
 
-- [ ] **Step 1: 失敗するテストを 2 件書く**
+- [x] **Step 1: 失敗するテストを 2 件書く**
 
 `tests/unit/test_watch_service.py` の末尾に追加する。`import os` を import 部に加える:
 
@@ -141,12 +141,12 @@ def test_notify_called_when_path_contains_symlink(tmp_path):
     svc.stop()
 ```
 
-- [ ] **Step 2: テストが失敗することを確認する**
+- [x] **Step 2: テストが失敗することを確認する**
 
 Run: `uv run pytest tests/unit/test_watch_service.py -q`
 Expected: `2 failed, 7 passed`(両方とも `assert _wait_for_notify(bus)` で FAIL)
 
-- [ ] **Step 3: `_ChangeHandler` を拡張する**
+- [x] **Step 3: `_ChangeHandler` を拡張する**
 
 `backend/services/watch_service.py` の `_ChangeHandler` を以下に置き換える
 (デバウンスは Task 3 で入れるため、ここでは直接 notify する):
@@ -175,12 +175,12 @@ class _ChangeHandler(FileSystemEventHandler):
             self._bus.notify()
 ```
 
-- [ ] **Step 4: テストが通ることを確認する**
+- [x] **Step 4: テストが通ることを確認する**
 
 Run: `uv run pytest tests/unit/test_watch_service.py -q`
 Expected: `9 passed`
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add backend/services/watch_service.py tests/unit/test_watch_service.py
@@ -195,7 +195,7 @@ git commit -m "fix: 他アプリのアトミックセーブでビューアが自
 - Modify: `backend/services/watch_service.py`(`_ChangeHandler` / `WatchService`)
 - Test: `tests/unit/test_watch_service.py`
 
-- [ ] **Step 1: 失敗するテストを 2 件書く**
+- [x] **Step 1: 失敗するテストを 2 件書く**
 
 `tests/unit/test_watch_service.py` の末尾に追加する:
 
@@ -229,14 +229,14 @@ def test_stop_cancels_pending_notify(tmp_mmd):
     assert bus.notified == []
 ```
 
-- [ ] **Step 2: テストが失敗することを確認する**
+- [x] **Step 2: テストが失敗することを確認する**
 
 Run: `uv run pytest tests/unit/test_watch_service.py -q`
 Expected: 2 件 FAIL —
 `test_rapid_writes_notify_once` は `len(bus.notified) == 1` で(直接 notify のため 2 回以上)、
 `test_stop_cancels_pending_notify` は `WatchService.__init__` に `debounce` 引数がなく TypeError。
 
-- [ ] **Step 3: デバウンスを実装する**
+- [x] **Step 3: デバウンスを実装する**
 
 `backend/services/watch_service.py` 全体を以下に置き換える:
 
@@ -344,17 +344,17 @@ class WatchService:
             self._observer = None
 ```
 
-- [ ] **Step 4: テストが通ることを確認する**
+- [x] **Step 4: テストが通ることを確認する**
 
 Run: `uv run pytest tests/unit/test_watch_service.py -q`
 Expected: `11 passed`
 
-- [ ] **Step 5: 全体の品質チェック**
+- [x] **Step 5: 全体の品質チェック**
 
 Run: `uv run task test && uv run task lint && uv run task typecheck`
 Expected: 全テスト pass(カバレッジ 80% 以上)、lint / typecheck エラーなし
 
-- [ ] **Step 6: Task 2 のコミットに amend で統合する**
+- [x] **Step 6: Task 2 のコミットに amend で統合する**
 
 Task 2 と同一修正(同じ fix、未 push)のため、ユーザーのコミット規約に従い amend する:
 
