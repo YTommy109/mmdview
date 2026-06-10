@@ -87,6 +87,21 @@ def test_viewer_has_zoom_controller_and_no_viewer_js(client, tmp_path):
     assert "viewer.js" not in response.text
 
 
+def test_viewer_error_panel_shows_error_message_text(client, tmp_path):
+    f = tmp_path / "test.mmd"
+    f.write_text("graph TD\n    A --> B", encoding="utf-8")
+    from backend.services.window_registry import window_registry
+
+    window_registry.create("w-err-msg", str(f))
+
+    response = client.get("/?window_id=w-err-msg")
+    assert response.status_code == 200
+    # mermaid.parseError はエラーオブジェクトを渡してくることがあるため、
+    # message / str を取り出して表示する（そのまま代入すると "[object Object]" になる）
+    assert "err.message || err.str" in response.text
+    assert "panel.textContent = err;" not in response.text
+
+
 def test_viewer_has_deleted_sse_handler(client, tmp_path):
     f = tmp_path / "test.mmd"
     f.write_text("graph TD\n    A --> B", encoding="utf-8")

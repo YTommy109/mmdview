@@ -101,8 +101,10 @@ mermaid.initialize({
 });
 
 mermaid.parseError = function(err) {
+  // mermaid は Error / プレーンオブジェクト / 文字列のいずれかを渡してくる
+  var msg = (err && (err.message || err.str)) || String(err);
   var panel = document.getElementById('mmd-error');
-  panel.textContent = err;
+  panel.textContent = msg;
   panel.style.display = 'block';
   document.getElementById('diagram-wrap').style.display = 'none';
 };
