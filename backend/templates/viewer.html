@@ -44,6 +44,8 @@ end
   </div>
 </div>
 
+<div id="mmd-deleted-banner" class="mmd-deleted-banner">deleted</div>
+
 <div class="zoom-controls" _="install ZoomController">
   <button id="zoom-out" title="縮小 (Cmd −)">−</button>
   <span id="zoom-label" title="クリックでリセット">100%</span>
@@ -52,7 +54,6 @@ end
 
 <script src="/static/js/mermaid.min.js"></script>
 <script>
-var _mmdFilename = {{ filename_json | safe }};
 var _mmdZoom = 1;
 var _mmdBaseScale = 0.75;
 function _mmdInitZoom() {
@@ -114,7 +115,7 @@ mermaid.run({ querySelector: '.mermaid' });
     if (e.data === 'reload') {
       location.reload();
     } else if (e.data === 'deleted') {
-      document.title = _mmdFilename + ' (deleted)';
+      document.getElementById('mmd-deleted-banner').style.display = 'block';
       document.body.style.background = '#e8e8e8';
     }
   };
