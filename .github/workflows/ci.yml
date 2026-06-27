@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: MmdviewApp
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: アプリをビルドする
+        run: swift build
+
+      - name: テストを実行する
+        run: swift test

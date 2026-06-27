@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      DMG_NAME: mmdview-${{ github.ref_name }}.dmg
+    defaults:
+      run:
+        working-directory: MmdviewApp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: xcodegen をインストールする
+        run: brew install xcodegen
+
+      - name: Xcode プロジェクトを生成する
+        run: xcodegen generate
+
+      - name: .app をビルドする
+        run: |
+          xcodebuild build \
+            -scheme mmdview \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: create-dmg をインストールする
+        run: brew install create-dmg
+
+      - name: DMG を作成する
+        run: |
+          create-dmg \
+            --volname "mmdview" \
+            "../$DMG_NAME" \
+            "build/Build/Products/Release/mmdview.app"
+
+      - name: GitHub Release を作成して DMG を添付する
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.DMG_NAME }}
