@@ -1,69 +1,67 @@
 # mmdview
 
-Mermaid ダイアグラム（`.mmd` / `.md`）をリアルタイムでプレビューする macOS デスクトップアプリ。
+macOS 向け Mermaid ダイアグラム・ビューアアプリ。
+`.mmd` / `.md` ファイルを監視し、mermaid.js でリアルタイムにプレビューする。
 
 ## 機能
 
 - ファイルを開いて Mermaid 図を即座にレンダリング
-- ファイルを保存すると自動でプレビューを更新
-- ウィンドウの位置・サイズと最後に開いたファイルを記憶
-- `⌘O` でファイルダイアログを開く
+- Markdown 内の Mermaid コードブロックにも対応
+- ファイルを保存すると自動でプレビューを更新（0.2s デバウンス）
+- 複数ウィンドウで同時に異なるファイルを表示
+- Open Recent メニューで最近開いたファイルに素早くアクセス
+- `⌘+` / `⌘-` / `⌘0` でズーム操作
+- ファイル削除時にバナーで通知、再作成で自動復帰
 
 ## 動作要件
 
-- macOS 12 (Monterey) 以降
+- macOS 14 (Sonoma) 以降
 
 ## インストール（開発環境）
 
 ```bash
-# 依存関係インストール
-uv sync
-
-# アプリ起動
-uv run task dev
+cd MmdviewApp
+swift build
 ```
 
-## ビルド（配布用 .app）
+## ビルド（Xcode）
 
 ```bash
-uv run task build
-open dist/mmdview.app
+cd MmdviewApp
+xcodegen generate            # .xcodeproj を生成
+xcodebuild build -scheme mmdview
 ```
-
-> **初回起動時の Gatekeeper 対応:**
-> Finder で `mmdview.app` を右クリック →「開く」を選択してください。
 
 ## 開発
 
 ```bash
-uv run task server     # FastAPI サーバーのみ起動（http://localhost:8000）
-uv run task test       # テスト + カバレッジ
-uv run task lint       # Ruff lint
-uv run task format     # Ruff フォーマット
-uv run task typecheck  # ty 型チェック
-```
-
-### pre-commit フックのインストール
-
-```bash
-uv run pre-commit install
+cd MmdviewApp
+swift build                  # ビルド
+swift test                   # テスト
+xcodegen generate            # .xcodeproj を再生成
 ```
 
 ## アーキテクチャ
 
 ```
-mmdview.app
-  ├── FastAPI サーバー（localhost:ランダムポート）
-  │   ├── GET /           ← welcome / viewer HTML
-  │   ├── POST /open-file ← OS ファイルダイアログ
-  │   └── GET /events     ← SSE（ファイル変更通知）
-  └── WKWebView（pywebview）
-       └── mermaid.js でクライアントサイドレンダリング
+mmdview.app (Swift / AppKit + SwiftUI)
+  ├── AppDelegate        # ライフサイクル・メニュー・ウィンドウ管理
+  ├── FileWatcher        # DispatchSource によるファイル監視（0.2s デバウンス）
+  ├── ViewerStore        # @Observable 表示状態（content / error / deleted）
+  └── ViewerWebView      # WKWebView（NSViewRepresentable）
+        ├── 同梱アセット（viewer.html / mermaid.min.js / markdown-it.min.js / style.css）
+        └── JS ブリッジ: evaluateJavaScript("render(content, type)")
 ```
 
-ファイル変更の通知経路: watchdog → EventBus → SSE → `window.location.reload()`
+HTTP・SSE・ポート管理は不要。ファイル変更は
+`FileWatcher → ViewerStore → evaluateJavaScript` の同一プロセス内伝搬で反映する。
 
-詳細は [`docs/superpowers/specs/2026-05-30-mmdview-design.md`](docs/superpowers/specs/2026-05-30-mmdview-design.md) を参照。
+## 技術スタック
+
+- Swift 6 / AppKit + SwiftUI（macOS 14+）
+- WKWebView（mermaid.js / markdown-it.js レンダリング）
+- DispatchSource（ファイル監視）
+- XcodeGen（プロジェクト生成）/ Swift Package Manager（ビルド）
 
 ## ライセンス
 
