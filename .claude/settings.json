@@ -1,3 +1,20 @@
 {
-  "enabledMcpjsonServers": ["dagayn"]
+  "enabledMcpjsonServers": ["dagayn"],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.swift'; then cd MmdviewApp && swift build 2>&1 | tail -5; fi"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'viewer\\.(js|html)'; then cd MmdviewApp && npx jest --silent 2>&1; fi"
+          }
+        ]
+      }
+    ]
+  }
 }
