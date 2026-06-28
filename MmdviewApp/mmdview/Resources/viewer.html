@@ -20,46 +20,44 @@
     <button id="zoom-in" title="拡大 (Cmd +)" onclick="_mmdZoomIn()">+</button>
   </div>
 
+  <script src="viewer.js"></script>
   <script src="mermaid.min.js"></script>
   <script src="markdown-it.min.js"></script>
   <script>
   // --- Zoom ---
-  var _mmdZoom = 1;
-  var _mmdBaseScale = 0.75;
+  var _mmdZoom = ZOOM_DEFAULT;
 
   function _mmdInitZoom() {
-    var z = parseFloat(localStorage.getItem('mmdview.viewer.zoom'));
-    _mmdZoom = isNaN(z) ? 1 : z;
+    _mmdZoom = parseStoredZoom(localStorage.getItem('mmdview.viewer.zoom'));
     _mmdApplyZoom();
   }
 
   function _mmdApplyZoom() {
-    if (_mmdZoom < 0.5) _mmdZoom = 0.5;
-    if (_mmdZoom > 2.0) _mmdZoom = 2.0;
-    document.getElementById('diagram-wrap').style.zoom = _mmdZoom * _mmdBaseScale;
-    document.getElementById('zoom-label').textContent = Math.round(_mmdZoom * 100) + '%';
-    document.getElementById('zoom-in').disabled = _mmdZoom >= 2.0;
-    document.getElementById('zoom-out').disabled = _mmdZoom <= 0.5;
+    _mmdZoom = clampZoom(_mmdZoom);
+    document.getElementById('diagram-wrap').style.zoom = effectiveZoom(_mmdZoom);
+    document.getElementById('zoom-label').textContent = zoomLabel(_mmdZoom);
+    document.getElementById('zoom-in').disabled = _mmdZoom >= ZOOM_MAX;
+    document.getElementById('zoom-out').disabled = _mmdZoom <= ZOOM_MIN;
     localStorage.setItem('mmdview.viewer.zoom', _mmdZoom);
   }
 
   function _mmdZoomIn() {
-    _mmdZoom = Math.round((_mmdZoom + 0.25) * 100) / 100;
+    _mmdZoom = stepZoom(_mmdZoom, ZOOM_STEP);
     _mmdApplyZoom();
   }
 
   function _mmdZoomOut() {
-    _mmdZoom = Math.round((_mmdZoom - 0.25) * 100) / 100;
+    _mmdZoom = stepZoom(_mmdZoom, -ZOOM_STEP);
     _mmdApplyZoom();
   }
 
   function _mmdZoomReset() {
-    _mmdZoom = 1;
+    _mmdZoom = ZOOM_DEFAULT;
     _mmdApplyZoom();
   }
 
   function _mmdWheelZoom(deltaY) {
-    _mmdZoom = Math.round((_mmdZoom - deltaY * 0.01) * 1000) / 1000;
+    _mmdZoom = wheelZoom(_mmdZoom, deltaY);
     _mmdApplyZoom();
   }
 
