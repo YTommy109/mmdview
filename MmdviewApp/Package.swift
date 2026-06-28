@@ -12,9 +12,10 @@ let package = Package(
         .executableTarget(
             name: "mmdview",
             path: "mmdview",
-            exclude: ["Info.plist", "mmdview.entitlements"],
+            exclude: ["Info.plist", "mmdview.entitlements", "Resources/__tests__"],
             resources: [
                 .copy("Resources/viewer.html"),
+                .copy("Resources/viewer.js"),
                 .copy("Resources/style.css"),
                 .copy("Resources/mermaid.min.js"),
                 .copy("Resources/markdown-it.min.js"),
