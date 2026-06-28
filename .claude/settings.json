@@ -1,10 +1,25 @@
 {
   "enabledMcpjsonServers": ["dagayn"],
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE 'Package\\.resolved|\\.swiftlint\\.yml|\\.swiftformat'; then echo 'BLOCK: このファイルはユーザーの明示的な指示なしに編集しないでください' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.swift'; then cd MmdviewApp && swift package plugin --allow-writing-to-package-directory swiftformat 2>&1 | tail -3; fi"
+          },
           {
             "type": "command",
             "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.swift'; then cd MmdviewApp && swift build 2>&1 | tail -5; fi"
