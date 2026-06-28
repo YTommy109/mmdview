@@ -25,7 +25,7 @@
 
 ## Minor（実装開始前に記述推奨）
 
-- [ ] **Sparkle 2 のセットアップ詳細を設計書に追記する**
+- [x] **Sparkle 2 のセットアップ詳細を設計書に追記する**
   - SUFeedURL の配置場所（GitHub Pages か GitHub Releases assets か）
   - EdDSA 鍵の管理方法（GitHub Actions Secret 等）
   - 初回起動時の自動確認ダイアログ設定（`SUEnableAutomaticChecks` の初期値）
