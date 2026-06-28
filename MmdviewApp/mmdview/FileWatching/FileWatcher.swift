@@ -1,9 +1,13 @@
 import Foundation
 
+protocol FileWatching: Sendable {
+    func stop()
+}
+
 /// ファイル変更を DispatchSource で監視し、変更時にコールバックを呼ぶ。
 /// ファイル削除後の再作成（アトミック保存）にも対応するため、
 /// ファイル本体とディレクトリの両方を監視する。
-final class FileWatcher: @unchecked Sendable {
+final class FileWatcher: FileWatching, @unchecked Sendable {
     private let resolvedPath: URL
     private var fileSource: DispatchSourceFileSystemObject?
     private var dirSource: DispatchSourceFileSystemObject?

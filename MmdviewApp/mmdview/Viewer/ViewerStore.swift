@@ -5,12 +5,19 @@ import Foundation
 @MainActor
 @Observable
 final class ViewerStore {
+    typealias WatcherFactory = @MainActor @Sendable (URL, @escaping @MainActor @Sendable () -> Void) -> FileWatching
+
     private(set) var content: String = ""
     private(set) var fileType: FileType = .mmd
     private(set) var isDeleted: Bool = false
     private(set) var filePath: URL?
 
-    private var fileWatcher: FileWatcher?
+    private var fileWatcher: FileWatching?
+    private let makeWatcher: WatcherFactory
+
+    init(watcherFactory: WatcherFactory? = nil) {
+        self.makeWatcher = watcherFactory ?? { url, onChange in FileWatcher(path: url, onChange: onChange) }
+    }
 
     /// 指定 URL のファイルを開き、ファイル監視を開始する。
     /// 既に別のファイルを開いている場合は、先に監視を停止してから切り替える。
@@ -20,7 +27,7 @@ final class ViewerStore {
         fileType = FileType(url: url)
         loadContent()
 
-        fileWatcher = FileWatcher(path: url) { [weak self] in
+        fileWatcher = makeWatcher(url) { [weak self] in
             self?.loadContent()
         }
     }

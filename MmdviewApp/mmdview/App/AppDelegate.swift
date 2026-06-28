@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        setupMainMenu()
+        NSApp.mainMenu = MainMenuBuilder.build(openAction: #selector(showOpenPanel))
         NSApp.activate()
     }
 
@@ -89,97 +89,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return types
     }()
 
-    // MARK: - Main Menu
-
-    private func setupMainMenu() {
-        let mainMenu = NSMenu()
-        mainMenu.addItem(makeAppMenuItem())
-        mainMenu.addItem(makeFileMenuItem())
-        mainMenu.addItem(makeWindowMenuItem())
-        NSApp.mainMenu = mainMenu
-    }
-
-    private func makeAppMenuItem() -> NSMenuItem {
-        let item = NSMenuItem()
-        let menu = NSMenu()
-        item.submenu = menu
-        menu.addItem(
-            withTitle: "About mmdview",
-            action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
-            keyEquivalent: "")
-        menu.addItem(.separator())
-        let servicesItem = NSMenuItem(title: "Services", action: nil, keyEquivalent: "")
-        servicesItem.submenu = NSMenu(title: "Services")
-        NSApp.servicesMenu = servicesItem.submenu
-        menu.addItem(servicesItem)
-        menu.addItem(.separator())
-        menu.addItem(
-            withTitle: "Hide mmdview",
-            action: #selector(NSApplication.hide(_:)),
-            keyEquivalent: "h")
-        let hideOthers = menu.addItem(
-            withTitle: "Hide Others",
-            action: #selector(NSApplication.hideOtherApplications(_:)),
-            keyEquivalent: "h")
-        hideOthers.keyEquivalentModifierMask = [.command, .option]
-        menu.addItem(
-            withTitle: "Show All",
-            action: #selector(NSApplication.unhideAllApplications(_:)),
-            keyEquivalent: "")
-        menu.addItem(.separator())
-        menu.addItem(
-            withTitle: "Quit mmdview",
-            action: #selector(NSApplication.terminate(_:)),
-            keyEquivalent: "q")
-        return item
-    }
-
-    private func makeFileMenuItem() -> NSMenuItem {
-        let item = NSMenuItem()
-        let menu = NSMenu(title: "File")
-        item.submenu = menu
-        menu.addItem(
-            withTitle: "Open…",
-            action: #selector(showOpenPanel),
-            keyEquivalent: "o")
-
-        let recentItem = NSMenuItem(title: "Open Recent", action: nil, keyEquivalent: "")
-        let recentMenu = NSMenu(title: "Open Recent")
-        // AppKit が Recent Documents メニューを認識するには非公開 API でメニュー名を登録する必要がある
-        recentMenu.perform(NSSelectorFromString("_setMenuName:"), with: "NSRecentDocumentsMenu")
-        recentMenu.addItem(
-            withTitle: "Clear Menu",
-            action: #selector(NSDocumentController.clearRecentDocuments(_:)),
-            keyEquivalent: "")
-        recentItem.submenu = recentMenu
-        menu.addItem(recentItem)
-
-        menu.addItem(.separator())
-        menu.addItem(
-            withTitle: "Close",
-            action: #selector(NSWindow.performClose(_:)),
-            keyEquivalent: "w")
-        return item
-    }
-
-    private func makeWindowMenuItem() -> NSMenuItem {
-        let item = NSMenuItem()
-        let menu = NSMenu(title: "Window")
-        item.submenu = menu
-        menu.addItem(
-            withTitle: "Minimize",
-            action: #selector(NSWindow.performMiniaturize(_:)),
-            keyEquivalent: "m")
-        menu.addItem(
-            withTitle: "Zoom",
-            action: #selector(NSWindow.performZoom(_:)),
-            keyEquivalent: "")
-        menu.addItem(.separator())
-        menu.addItem(
-            withTitle: "Bring All to Front",
-            action: #selector(NSApplication.arrangeInFront(_:)),
-            keyEquivalent: "")
-        NSApp.windowsMenu = menu
-        return item
-    }
 }

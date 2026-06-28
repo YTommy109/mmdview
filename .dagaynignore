@@ -3,7 +3,9 @@ MmdviewApp/.build/
 MmdviewApp/build/
 MmdviewApp/DerivedData/
 MmdviewApp/mmdview.xcodeproj/
+**/.build/
 *.xcuserstate
+*.pcm.lock*
 
 # Minified JS (no structural info for the graph)
 *.min.js

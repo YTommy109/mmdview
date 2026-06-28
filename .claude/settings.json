@@ -26,6 +26,11 @@
           },
           {
             "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.swift'; then cd MmdviewApp && swift test --skip Integration --skip FileWatcherTests 2>&1 | tail -5; fi",
+            "timeout": 30
+          },
+          {
+            "type": "command",
             "command": "if echo \"$TOOL_INPUT\" | grep -qE 'viewer\\.(js|html)'; then cd MmdviewApp && npx jest --silent 2>&1; fi"
           }
         ]
