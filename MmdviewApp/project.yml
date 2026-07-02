@@ -25,7 +25,7 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.degino.mmdview
       PRODUCT_NAME: mmdview
-      MARKETING_VERSION: "1.1.0"
+      MARKETING_VERSION: "1.1.1"
       CURRENT_PROJECT_VERSION: "1"
       INFOPLIST_FILE: mmdview/Info.plist
       CODE_SIGN_ENTITLEMENTS: mmdview/mmdview.entitlements
