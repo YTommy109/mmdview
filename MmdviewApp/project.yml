@@ -20,6 +20,8 @@ targets:
           - mmdview.entitlements
       - path: mmdview/Resources
         buildPhase: resources
+        excludes:
+          - "__tests__/**"
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.degino.mmdview
       PRODUCT_NAME: mmdview
