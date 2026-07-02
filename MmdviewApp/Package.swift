@@ -14,6 +14,7 @@ let package = Package(
             path: "mmdview",
             exclude: ["Info.plist", "mmdview.entitlements", "Resources/__tests__"],
             resources: [
+                .copy("Resources/AppIcon.icns"),
                 .copy("Resources/viewer.html"),
                 .copy("Resources/viewer.js"),
                 .copy("Resources/style.css"),

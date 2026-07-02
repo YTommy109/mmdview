@@ -8,19 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		06E587F21050CC0026582675 /* FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECEA97141C132039BFA0E11 /* FileType.swift */; };
+		0A0FFB0E484C19F648CE07F4 /* viewer.js in Resources */ = {isa = PBXBuildFile; fileRef = F776E25D17B9E87D102CA2B7 /* viewer.js */; };
+		10E672D2B36BE7E0ED5F7FA8 /* viewer.test.js in Resources */ = {isa = PBXBuildFile; fileRef = A579EE845C2DBEDD53908537 /* viewer.test.js */; };
 		1E981BD656C7CA2465CF7021 /* ViewerWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54693EA14F015883DCEC29FD /* ViewerWebView.swift */; };
+		255172CBE191903A95E686F5 /* MainMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175269206331476DA6AD97CC /* MainMenuBuilder.swift */; };
 		2D4751CCF1DAAE5CC9602525 /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = 0F2FB3A844F85A5A7A9C9BE7 /* style.css */; };
+		30E33E98B447B23C39AD2CE5 /* FileTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4338866FF99239C07662F3BB /* FileTypeTests.swift */; };
 		36410EB189A636CB114AB035 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90428A14BC6B74D345E8B0E /* Debouncer.swift */; };
 		3B0CE1667AAFBC00C64F6BAE /* ViewerStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C98C3D1E3365899076811A /* ViewerStoreTests.swift */; };
 		4BA39DCAE8426E953E75D405 /* FileWatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86682A8334DB68ED618DAF38 /* FileWatcherTests.swift */; };
 		71FFCEC9DCB3C2F13BA40694 /* mermaid.min.js in Resources */ = {isa = PBXBuildFile; fileRef = BD8262375D18C5C3E2CDCD36 /* mermaid.min.js */; };
 		7F34BEA2BA11C76334E83D38 /* viewer.html in Resources */ = {isa = PBXBuildFile; fileRef = 60F322A444F3D6FB750846A1 /* viewer.html */; };
 		8171003C841BC08EE7A80EF6 /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBF2FE8DFF2683C0B4DD45A /* DebouncerTests.swift */; };
+		85E8C3C60864A4F891A8B9C5 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 943DBC47DB4399D9F1B98A4E /* AppIcon.icns */; };
 		8B5C7958B33BF2CF6B749029 /* markdown-it.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 2E3E95DB93DBE435422D5498 /* markdown-it.min.js */; };
 		9468E715957FEF5E8C470ABC /* ViewerContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56A418883D17999644B3943 /* ViewerContentView.swift */; };
 		A8C09933B33AEEA06F2C8B72 /* ViewerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77F6F5678A696DACE24C69A /* ViewerWindowController.swift */; };
 		AA05608A2E2E687D06789544 /* DocumentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16FDE84CBC9A6A566C50FF7 /* DocumentController.swift */; };
 		AA569204B8CF7AF8D7F13A24 /* ViewerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26364FB0B39B66447B691BD /* ViewerStore.swift */; };
+		B63A5D1E812D091AA50D4F86 /* ViewerStoreIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75ED74BD6A05AC4DA2B49774 /* ViewerStoreIntegrationTests.swift */; };
 		CF28501A98287BB51CE13377 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E5A40BED6330AE1B10E274 /* FileWatcher.swift */; };
 		D56C453FC1B5F7E2E2735873 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13505DE7B96C02F2847E874 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
@@ -37,23 +43,29 @@
 
 /* Begin PBXFileReference section */
 		0F2FB3A844F85A5A7A9C9BE7 /* style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		175269206331476DA6AD97CC /* MainMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuBuilder.swift; sourceTree = "<group>"; };
 		1EBF2FE8DFF2683C0B4DD45A /* DebouncerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncerTests.swift; sourceTree = "<group>"; };
 		2E3E95DB93DBE435422D5498 /* markdown-it.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "markdown-it.min.js"; sourceTree = "<group>"; };
+		4338866FF99239C07662F3BB /* FileTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypeTests.swift; sourceTree = "<group>"; };
 		54693EA14F015883DCEC29FD /* ViewerWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerWebView.swift; sourceTree = "<group>"; };
 		60F322A444F3D6FB750846A1 /* viewer.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = viewer.html; sourceTree = "<group>"; };
 		61C98C3D1E3365899076811A /* ViewerStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerStoreTests.swift; sourceTree = "<group>"; };
 		65CBDAFE9109D3DBE6F05BCE /* mmdview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mmdview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ECEA97141C132039BFA0E11 /* FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileType.swift; sourceTree = "<group>"; };
+		75ED74BD6A05AC4DA2B49774 /* ViewerStoreIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerStoreIntegrationTests.swift; sourceTree = "<group>"; };
 		77E5A40BED6330AE1B10E274 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
 		84AFAE682C5982C47A53B3DE /* mmdviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mmdviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		86682A8334DB68ED618DAF38 /* FileWatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcherTests.swift; sourceTree = "<group>"; };
+		943DBC47DB4399D9F1B98A4E /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		A56A418883D17999644B3943 /* ViewerContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerContentView.swift; sourceTree = "<group>"; };
+		A579EE845C2DBEDD53908537 /* viewer.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = viewer.test.js; sourceTree = "<group>"; };
 		BD8262375D18C5C3E2CDCD36 /* mermaid.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = mermaid.min.js; sourceTree = "<group>"; };
 		C16FDE84CBC9A6A566C50FF7 /* DocumentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentController.swift; sourceTree = "<group>"; };
 		C90428A14BC6B74D345E8B0E /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		E77F6F5678A696DACE24C69A /* ViewerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerWindowController.swift; sourceTree = "<group>"; };
 		F13505DE7B96C02F2847E874 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F26364FB0B39B66447B691BD /* ViewerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerStore.swift; sourceTree = "<group>"; };
+		F776E25D17B9E87D102CA2B7 /* viewer.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = viewer.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -68,6 +80,14 @@
 			path = Viewer;
 			sourceTree = "<group>";
 		};
+		205018AD9443024AB6EF462D /* __tests__ */ = {
+			isa = PBXGroup;
+			children = (
+				A579EE845C2DBEDD53908537 /* viewer.test.js */,
+			);
+			path = __tests__;
+			sourceTree = "<group>";
+		};
 		4B6EFDCCEDE237B841C81DA1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -80,10 +100,13 @@
 		78F1E0AFEDC93FF308A2A98A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				943DBC47DB4399D9F1B98A4E /* AppIcon.icns */,
 				2E3E95DB93DBE435422D5498 /* markdown-it.min.js */,
 				BD8262375D18C5C3E2CDCD36 /* mermaid.min.js */,
 				0F2FB3A844F85A5A7A9C9BE7 /* style.css */,
 				60F322A444F3D6FB750846A1 /* viewer.html */,
+				F776E25D17B9E87D102CA2B7 /* viewer.js */,
+				205018AD9443024AB6EF462D /* __tests__ */,
 			);
 			name = Resources;
 			path = mmdview/Resources;
@@ -113,6 +136,7 @@
 			children = (
 				F13505DE7B96C02F2847E874 /* AppDelegate.swift */,
 				C16FDE84CBC9A6A566C50FF7 /* DocumentController.swift */,
+				175269206331476DA6AD97CC /* MainMenuBuilder.swift */,
 				E77F6F5678A696DACE24C69A /* ViewerWindowController.swift */,
 			);
 			path = App;
@@ -122,7 +146,9 @@
 			isa = PBXGroup;
 			children = (
 				1EBF2FE8DFF2683C0B4DD45A /* DebouncerTests.swift */,
+				4338866FF99239C07662F3BB /* FileTypeTests.swift */,
 				86682A8334DB68ED618DAF38 /* FileWatcherTests.swift */,
+				75ED74BD6A05AC4DA2B49774 /* ViewerStoreIntegrationTests.swift */,
 				61C98C3D1E3365899076811A /* ViewerStoreTests.swift */,
 			);
 			path = mmdviewTests;
@@ -213,10 +239,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85E8C3C60864A4F891A8B9C5 /* AppIcon.icns in Resources */,
 				8B5C7958B33BF2CF6B749029 /* markdown-it.min.js in Resources */,
 				71FFCEC9DCB3C2F13BA40694 /* mermaid.min.js in Resources */,
 				2D4751CCF1DAAE5CC9602525 /* style.css in Resources */,
 				7F34BEA2BA11C76334E83D38 /* viewer.html in Resources */,
+				0A0FFB0E484C19F648CE07F4 /* viewer.js in Resources */,
+				10E672D2B36BE7E0ED5F7FA8 /* viewer.test.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +261,7 @@
 				AA05608A2E2E687D06789544 /* DocumentController.swift in Sources */,
 				06E587F21050CC0026582675 /* FileType.swift in Sources */,
 				CF28501A98287BB51CE13377 /* FileWatcher.swift in Sources */,
+				255172CBE191903A95E686F5 /* MainMenuBuilder.swift in Sources */,
 				9468E715957FEF5E8C470ABC /* ViewerContentView.swift in Sources */,
 				AA569204B8CF7AF8D7F13A24 /* ViewerStore.swift in Sources */,
 				1E981BD656C7CA2465CF7021 /* ViewerWebView.swift in Sources */,
@@ -244,7 +274,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8171003C841BC08EE7A80EF6 /* DebouncerTests.swift in Sources */,
+				30E33E98B447B23C39AD2CE5 /* FileTypeTests.swift in Sources */,
 				4BA39DCAE8426E953E75D405 /* FileWatcherTests.swift in Sources */,
+				B63A5D1E812D091AA50D4F86 /* ViewerStoreIntegrationTests.swift in Sources */,
 				3B0CE1667AAFBC00C64F6BAE /* ViewerStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,7 +306,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.degino.mmdview;
 				PRODUCT_NAME = mmdview;
 				SDKROOT = macosx;
@@ -433,7 +465,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.degino.mmdview;
 				PRODUCT_NAME = mmdview;
 				SDKROOT = macosx;
